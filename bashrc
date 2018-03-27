@@ -1,6 +1,4 @@
-# ~/.bashrc: executed by bash(1) for non-login shells.
-# .see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-
+#!/bin/bash
 ########################################################
 #|# Preamble                                         #
 ########################################################
@@ -17,12 +15,12 @@ elif [[ "x${uname}" == "xLinux" ]]; then
 fi
 
 export hostname='unknown'
-if which hostname >/dev/null; then
+if command -v hostname >/dev/null; then
     export hostname=$(hostname)
 fi
 
 export dnsdomainname='unknown'
-if which dnsdomainname >/dev/null; then
+if command -v dnsdomainname >/dev/null; then
     export dnsdomainname=$(dnsdomainname)
 fi
 
@@ -62,7 +60,6 @@ bind '"\e[B":history-search-forward'
 ########################################################
 #|## MILNAS											   #
 ########################################################
-
 if [[ "x$(hostname)" = "xarchThrone" ]]; then
     #Load all bash personal scripts 
 	for script in bash_aliases bash_functions bash_exports
@@ -70,3 +67,4 @@ if [[ "x$(hostname)" = "xarchThrone" ]]; then
 		source ~/.${script}
 	done
 fi
+

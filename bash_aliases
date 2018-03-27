@@ -1,20 +1,12 @@
 ########################################################
 #|## Folder Navigation                                 #
 ########################################################
-alias ..='echo "Did you mean bd or cdup?"'
+alias ..='bd'
 alias ...='cd ../../'
 alias ....='cd ../../../'
 alias .....='cd ../../../../'
 alias ......='cd ../../../../../'
 alias dirs='dirs -v'
-
-alias gt-home='cd ~'
-alias gt-documents='cd ~/Documents'
-alias gt-videos='cd ~/Videos'
-alias gt-downloads='cd ~/Downloads'
-alias gt-music='cd ~/Music'
-alias gt-pictures='cd ~/Pictures'
-alias gt-reviews='cd ~/work/udacity/yourFirstAppReviews'
 
 ########################################################
 #|## Listings                                          #

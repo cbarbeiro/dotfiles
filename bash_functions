@@ -21,30 +21,12 @@ function cd() {
 function bd(){
   if [ "$#" = "0" ]
   then
-    popd
+    popd >/dev/null
   else
     for i in $(seq ${1})
     do
-      popd
+      popd >/dev/null
     done
-  fi
-}
-
-########################################################
-#|NAME: CHANGE DIRECTORY (UP)						   #
-#|# Go up X directories								   #
-########################################################
-function cdup(){
-  if [ "$#" = "0" ]
-  then
-    cd ..
-  else
-    reldir=''
-    for i in $(seq ${1})
-    do
-      reldir="${reldir}../"
-    done
-     cd ${reldir}
   fi
 }
 
