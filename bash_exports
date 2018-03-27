@@ -1,0 +1,28 @@
+# don't put duplicate lines in the history. See bash(1) for more options
+export HISTCONTROL=ignoredups
+export HISTIGNORE="&:ls:exit:[ ]*"
+export HISTSIZE=99999
+
+export EDITOR='vim'
+export VISUAL='vim' 
+
+export CDPATH=".:~"
+export PATH="$PATH:~/.scripts"
+
+########################################################
+#|## Ruby                                              #
+########################################################
+if [ -x /usr/bin/ruby ]
+then
+    export PATH="$(/usr/bin/ruby -e 'print Gem.user_dir')/bin:$PATH"
+fi
+
+########################################################
+#|## Android Studio                                    #
+########################################################
+if [ -x /usr/bin/android-studio ]
+then
+	export ANDROID_HOME=/opt/android-sdk
+	export ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
+fi
+
