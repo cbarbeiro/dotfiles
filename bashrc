@@ -43,7 +43,6 @@ shopt -s histappend
 shopt -s expand_aliases
 shopt -s lithist
 shopt -s extglob
-set show-all-if-ambiguous on
 
 # enable smart history search
 bind '"\e[A":history-search-backward'

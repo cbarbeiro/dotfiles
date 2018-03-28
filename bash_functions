@@ -88,3 +88,50 @@ type -t file
 whatis file
 which file
 }
+
+########################################################
+#|NAME: BOOKMARKS MANAGER			       #
+#|# Functions related to CRUD folder bookmarks	       #
+########################################################
+
+# Show bookmarks list and allow to cd into selected folder
+function bm() {
+local dest_dir=$(bm-ls | fzf )
+if [[ $dest_dir != '' ]]; then
+	eval cd $dest_dir
+fi
+}
+
+# ADD current dir to bookmarks list
+function bm-add () {
+local curr_dir="${PWD}"
+local curr_entry=$curr_dir
+#if there's comments - add them
+if [[ $# -ne 0 ]]; then
+	curr_entry=$curr_dir" # $*"
+fi
+
+if ! grep -Fxq "$curr_dir" $BM_DIRECTORY; then
+	echo "$curr_entry" >> $BM_DIRECTORY
+	echo "$curr_dir added to bookmarks"
+else
+	echo "$curr_dir already in bookmarks"
+fi
+}
+
+# EDIT bookmarks list
+function bm-edit () { vim $BM_DIRECTORY; }
+
+# CAT bookmarks list
+function bm-cat () { cat $BM_DIRECTORY | sed '/^\s*$/d'; }
+
+# LIST bookmarks (and treats output to fzf)
+function bm-ls () {
+if [ ! -r $BM_DIRECTORY ]; then
+	echo "There's no $BM_DIRECTORY"
+	exit 1
+fi
+
+#cat bookmarks | remove whole line comments | remove empty lines
+bm-cat $BM_DIRECTORY | sed 's/^#.*//g' | sed '/^\s*$/d'
+}

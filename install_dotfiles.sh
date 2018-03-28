@@ -20,7 +20,7 @@ fi
 
 
 # install main config files
-for dotfile in bashrc bash_aliases bash_exports bash_functions #vimrc gitconfig htop
+for dotfile in bashrc bash_aliases bash_exports bash_functions dir_bookmarks #vimrc gitconfig htop
 do
 	if [[ -L ~/.${dotfile} ]]; then
 		rm ~/.${dotfile}

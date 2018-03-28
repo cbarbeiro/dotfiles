@@ -1,0 +1,14 @@
+#Personal
+/home/milnas/Documents
+/home/milnas/Videos
+/home/milnas/Downloads
+/home/milnas/Music
+/home/milnas/Pictures
+/home/milnas/work/udacity/yourFirstAppReviews
+/home/milnas/dotfiles
+
+#System
+/var/pacman/cache/pkg
+/var/log
+
+#Recently Added

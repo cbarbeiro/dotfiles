@@ -11,8 +11,11 @@ alias dirs='dirs -v'
 ########################################################
 #|## Listings                                          #
 ########################################################
-alias ls='ls --color=always --format=horizontal'
+alias ls='ls --color=always --format=vertical'
+alias ll='ls -l'
+alias la='ls -la'
 alias lsdir='ls -l --color=always | grep -e "^d"'  # list only directories
+alias lsfiles='ls -l --color=always | grep -ve "^d"'  # list only files
 alias grep='grep --color=always -n'
 
 ########################################################
