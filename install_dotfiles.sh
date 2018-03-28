@@ -28,10 +28,4 @@ do
 	ln -sv $(pwd)/${dotfile} ~/.${dotfile}
 done
 
-# install scripts folder
-if [ ! -d ${SCRIPTS_FOLDER} ]
-then
-    mkdir -pv ${SCRIPTS_FOLDER}
-fi
-
 echo "Done!"

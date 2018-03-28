@@ -66,7 +66,7 @@ then
 else
     message=${1}
 fi
-notify-send -u normal -t 10 -i info '{whoami}' ${1}
+notify-send -u normal -t 10 -i info $(whoami) ${1}
 }
 
 ########################################################
