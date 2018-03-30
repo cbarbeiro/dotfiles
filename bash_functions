@@ -84,9 +84,9 @@ function firegex() { find . -regextype posix-egrep -iregex "*$@*"; }
 ########################################################
 function which(){
 file=${1}
-type -t file
-whatis file
-which file
+type -t $file
+/usr/bin/which $file
+whatis $file
 }
 
 ########################################################
