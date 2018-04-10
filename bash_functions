@@ -64,9 +64,10 @@ if [ "x${1}" == "x" ]
 then
     message='Hello World'
 else
-    message=${1}
+    message=${1} ${2} ${3} ${4} ${5}
 fi
-notify-send -u normal -t 10 -i info $(whoami) ${1}
+echo $message
+notify-send -u normal -t 10 -i info $(whoami) "$message"
 }
 
 ########################################################

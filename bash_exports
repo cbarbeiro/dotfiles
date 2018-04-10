@@ -9,6 +9,7 @@ export VISUAL='vim'
 export CDPATH=".:~/"
 export PATH="$PATH:~/dotfiles"
 export BM_DIRECTORY=~/.dir_bookmarks
+export PACMAN_IGNORE="ttf-croscore,noto-fonts"
 
 ########################################################
 #|## Ruby                                              #

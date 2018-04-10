@@ -33,7 +33,7 @@ alias diff='colordiff'
 ########################################################
 alias pacmans='sudo pacman -S'
 alias pacmanss='pacman -Ss'
-alias pacmansyu='sudo pacman -Syu'
+alias pacmansyu='sudo pacman -Syu --ignore $PACMAN_IGNORE'
 alias pacmanrns='sudo pacman -Rns'
 
 ########################################################
@@ -47,7 +47,7 @@ alias pkill='pkill -e'
 ########################################################
 #|## Miscellaneous                                     #
 ########################################################
-alias getmyip="curl http://ipecho.net/plain"
+alias getmyip="curl http://ipecho.net/plain; echo -e \"\n\""
 
 # Make the bash feel smoother
 # correct common typos
