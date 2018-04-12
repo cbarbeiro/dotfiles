@@ -16,6 +16,7 @@ alias ll='ls -l'
 alias la='ls -la'
 alias lsdir='ls -l --color=always | grep -e "^d"'  # list only directories
 alias lsfiles='ls -l --color=always | grep -ve "^d"'  # list only files
+alias lsfilesall='ls -la --color=always | grep -ve "^d"'  # list all (incl. hidden) files
 alias grep='grep --color=always -n'
 
 ########################################################
@@ -27,6 +28,7 @@ alias rm='rm -dIv --preserve-root'
 alias ln='ln -iv'
 alias mkdir='mkdir -pv'
 alias diff='colordiff'
+alias findexe='find $(path) -type f -prune -executable | cut -d':' -f1 | \grep'
 
 ########################################################
 #|## Package Management                                #
@@ -35,6 +37,9 @@ alias pacmans='sudo pacman -S'
 alias pacmanss='pacman -Ss'
 alias pacmansyu='sudo pacman -Syu --ignore $PACMAN_IGNORE'
 alias pacmanrns='sudo pacman -Rns'
+alias pacmanqs='pacman -Qs' #Search packages locally
+alias pacmanqo='pacman -Qo' #Which package owns file?
+alias pacmanqi='pacman -Qi' #Info about a package
 
 ########################################################
 #|## OS Management                                     #
@@ -47,7 +52,14 @@ alias pkill='pkill -e'
 ########################################################
 #|## Miscellaneous                                     #
 ########################################################
-alias getmyip="curl http://ipecho.net/plain; echo -e \"\n\""
+alias getmyip='curl http://ipecho.net/plain; echo -e \"\n\"'
+alias cast='castnow'
+alias cast-transcode='castnow --transcoder ffmpeg --transcode'
+alias cast-gnome='gnomecast &&'
+alias cast-converter='chromecastize.sh --mkv'
+alias edit-alias='vim ~/.bash_aliases'
+alias edit-exports='vim ~/.bash_exports'
+alias edit-functions='vim ~/.bash_functions'
 
 # Make the bash feel smoother
 # correct common typos
