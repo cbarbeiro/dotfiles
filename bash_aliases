@@ -28,13 +28,14 @@ alias rm='rm -dIv --preserve-root'
 alias ln='ln -iv'
 alias mkdir='mkdir -pv'
 alias diff='colordiff'
-alias findexe='find $(path) -type f -prune -executable | cut -d':' -f1 | \grep'
+alias findexe='find $(path) -type f -prune -executable | cut -d':' -f1 | \grep --color=always'
 
 ########################################################
 #|## Package Management                                #
 ########################################################
-alias pacmans='sudo pacman -S'
 alias pacmanss='pacman -Ss'
+alias pacmans='sudo pacman -S'
+alias pacmanu='sudo pacman -U'
 alias pacmansyu='sudo pacman -Syu --ignore $PACMAN_IGNORE'
 alias pacmanrns='sudo pacman -Rns'
 alias pacmanqs='pacman -Qs' #Search packages locally
@@ -57,9 +58,11 @@ alias cast='castnow'
 alias cast-transcode='castnow --transcoder ffmpeg --transcode'
 alias cast-gnome='gnomecast &&'
 alias cast-converter='chromecastize.sh --mkv'
-alias edit-alias='vim ~/.bash_aliases'
+alias edit-aliases='vim ~/.bash_aliases'
 alias edit-exports='vim ~/.bash_exports'
 alias edit-functions='vim ~/.bash_functions'
+alias source-dotfiles='source ~/.bash_aliases ~/.bash_functions ~/.bash_exports '
+alias echo="echo -e"
 
 # Make the bash feel smoother
 # correct common typos

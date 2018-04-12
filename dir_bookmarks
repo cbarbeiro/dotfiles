@@ -1,14 +1,17 @@
 #Personal
-/home/milnas/Documents
-/home/milnas/Videos
-/home/milnas/Downloads
-/home/milnas/Music
-/home/milnas/Pictures
-/home/milnas/work/udacity/yourFirstAppReviews
-/home/milnas/dotfiles
+$HOME/Documents
+$HOME/Videos
+$HOME/Downloads
+$HOME/Music
+$HOME/Pictures
+$HOME/work/udacity/yourFirstAppReviews
+$HOME/dotfiles
 
 #System
 /var/pacman/cache/pkg
 /var/log
 
 #Recently Added
+$HOME/.ssh
+$HOME/WIT # WIT SOFTWARE ROOT
+$HOME/WIT/vdf_pt_epg_manager

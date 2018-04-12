@@ -8,8 +8,9 @@ export VISUAL='vim'
 
 export CDPATH=".:~/"
 export DOTFILES_PATH="$(echo $HOME)/dotfiles"
-export PATH="$PATH:$DOTFILES_PATH"
 export BM_DIRECTORY=~/.dir_bookmarks
+export WIT_HOME="$(echo $HOME)/WIT"
+export PATH="$PATH:$DOTFILES_PATH:$WIT_HOME"
 export PACMAN_IGNORE="ttf-croscore,noto-fonts"
 
 ########################################################
