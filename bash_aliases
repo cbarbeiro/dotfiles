@@ -1,4 +1,12 @@
 ########################################################
+#|## Alias Tips                                        #
+########################################################
+# Disable aliases by prefixing with '\':
+# $\grep
+# Do not save in history by prefixing with ' '(space):
+# $ grep
+
+########################################################
 #|## Folder Navigation                                 #
 ########################################################
 alias ..='bd'
@@ -11,7 +19,7 @@ alias dirs='dirs -v'
 ########################################################
 #|## Listings                                          #
 ########################################################
-alias ls='ls --color=always --format=vertical'
+alias ls='ls --color=always --format=vertical --group-directories-first'
 alias ll='ls -l'
 alias la='ls -la'
 alias lsdir='ls -l --color=always | grep -e "^d"'  # list only directories
@@ -41,6 +49,8 @@ alias pacmanrns='sudo pacman -Rns'
 alias pacmanqs='pacman -Qs' #Search packages locally
 alias pacmanqo='pacman -Qo' #Which package owns file?
 alias pacmanqi='pacman -Qi' #Info about a package
+alias packerss='packer -Ss'
+alias packers='packer -S'
 
 ########################################################
 #|## OS Management                                     #
@@ -54,15 +64,20 @@ alias pkill='pkill -e'
 #|## Miscellaneous                                     #
 ########################################################
 alias getmyip='curl http://ipecho.net/plain; echo -e \"\n\"'
+alias echo="echo -e"
+alias edit-aliases='vim ~/.bash_aliases'
+alias edit-exports='vim ~/.bash_exports'
+alias edit-functions='vim ~/.bash_functions'
+alias ssh-agent='eval \"ssh-agent\"'
+alias paclog='paclog --color | less -R'
+
+########################################################
+#|## ChromeCast                                        #
+########################################################
 alias cast='castnow'
 alias cast-transcode='castnow --transcoder ffmpeg --transcode'
 alias cast-gnome='gnomecast &&'
 alias cast-converter='chromecastize.sh --mkv'
-alias edit-aliases='vim ~/.bash_aliases'
-alias edit-exports='vim ~/.bash_exports'
-alias edit-functions='vim ~/.bash_functions'
-alias source-dotfiles='source ~/.bash_aliases ~/.bash_functions ~/.bash_exports '
-alias echo="echo -e"
 
 # Make the bash feel smoother
 # correct common typos
