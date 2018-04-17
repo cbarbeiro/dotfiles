@@ -68,8 +68,15 @@ alias echo="echo -e"
 alias edit-aliases='vim ~/.bash_aliases'
 alias edit-exports='vim ~/.bash_exports'
 alias edit-functions='vim ~/.bash_functions'
-alias ssh-agent='eval \"ssh-agent\"'
 alias paclog='paclog --color | less -R'
+alias term='gnome-terminal'
+########################################################
+#|## SSH                                               #
+########################################################
+alias ssh-agent='exec ssh-agent bash -i <<< "echo Secure Session; exec </dev/tty"'
+alias ssh-list='ssh-add -l'
+alias ssh-lock='ssh-add -x'
+alias ssh-unlock='ssh-add -X'
 
 ########################################################
 #|## ChromeCast                                        #
