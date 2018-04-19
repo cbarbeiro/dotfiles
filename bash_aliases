@@ -41,6 +41,7 @@ alias pacmanrns='sudo pacman -Rns'
 alias pacmanqs='pacman -Qs' #Search packages locally
 alias pacmanqo='pacman -Qo' #Which package owns file?
 alias pacmanqi='pacman -Qi' #Info about a package
+alias paclog='paclog --color | less -R' 
 
 ########################################################
 #|## OS Management                                     #
@@ -56,7 +57,6 @@ alias pkill='pkill -e'
 alias getmyip='curl http://ipecho.net/plain; echo -e \"\n\"'
 alias cast='castnow'
 alias cast-transcode='castnow --transcoder ffmpeg --transcode'
-alias cast-gnome='gnomecast &&'
 alias cast-converter='chromecastize.sh --mkv'
 alias edit-aliases='vim ~/.bash_aliases'
 alias edit-exports='vim ~/.bash_exports'
