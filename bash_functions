@@ -1,6 +1,6 @@
 ########################################################
-#|NAME: CHANGE DIRECTORY							   #
-#|# Leverage pushd command when using cd			   #
+#|NAME: CHANGE DIRECTORY                               #
+#|# Leverage pushd command when using cd               #
 ########################################################
 function cd() {
   if [ "$#" = "0" ]
@@ -15,8 +15,8 @@ function cd() {
 }
 
 ########################################################
-#|NAME: BACK DIRECTORY								   #
-#|# Leverage popd command when using cd				   #
+#|NAME: BACK DIRECTORY                                 #
+#|# Leverage popd command when using cd                #
 ########################################################
 function bd(){
   if [ "$#" = "0" ]
@@ -31,8 +31,8 @@ function bd(){
 }
 
 ########################################################
-#|NAME: PATH										   #
-#|# Prints paths in $PATH							   #
+#|NAME: PATH                                           #
+#|# Prints paths in $PATH                              #
 ########################################################
 function path(){
     old=$IFS
@@ -40,54 +40,64 @@ function path(){
     printf "%s\n" $PATH
     IFS=$old
 }
-alias PATH='path'
 
 ########################################################
-#|NAME: EXECUTIFY									   #
-#|# Run or make runnable $FILE						   #
+#|NAME: EXECUTIFY                                      #
+#|# Run or make runnable $FILE                         #
 ########################################################
 function executify(){
-file=${1}
-if  [ -f ${file} -a ! -x ${file} ]
-then
-  chmod +x ${file}
-fi
-./${file}
+	file=${1}
+	if  [ -f ${file} -a ! -x ${file} ]
+	then
+		chmod +x ${file}
+	fi
+	./${file}
 }
 
 ########################################################
-#|NAME: SHOW NOTIFICATION							   #
-#|# Shows a notification in desktop	with $1			   #
+#|NAME: SHOW NOTIFICATION                              #
+#|# Shows a notification in desktop	with $1	       #
 ########################################################
 function show_notification(){
-if [ "x${1}" == "x" ]
-then
-    message='Hello World'
-else
-    message=${1} ${2} ${3} ${4} ${5}
-fi
-echo $message
-notify-send -u normal -t 10 -i info $(whoami) "$message"
+	if [ "x${1}" == "x" ]
+	then
+	    message='Hello World'
+	else
+	    message=${1} ${2} ${3} ${4} ${5}
+	fi
+	echo $message
+	notify-send -u normal -t 10 -i info $(whoami) "$message"
 }
 
 ########################################################
-#|NAME: FIND FUNCTIONS								   #
-#|# Functions to find files $1						   #
+#|NAME: ONE LINERS                                     #
+#|# Quick and useful one-line functions                #
 ########################################################
 function fname() { find . -name "*$@*"; }
 function finame() { find . -iname "*$@*"; }
 function fregex() { find . -regextype posix-egrep -regex "*$@*"; }
 function firegex() { find . -regextype posix-egrep -iregex "*$@*"; }
+function mkdircd () { mkdir -p "$@" && eval cd "\"\$$#\""; }
 
 ########################################################
-#|NAME: WHICH 										   #
-#|# Show information on runnable $1					   #
+#|NAME: WHICH                                          #
+#|# Show information on runnable                       #
 ########################################################
 function which(){
-file=${1}
-type -t $file
-/usr/bin/which $file
-whatis $file
+	file=${1}
+	type -t $file
+	/usr/bin/which $file
+	whatis $file
+}
+
+########################################################
+#|NAME: SOURCE DOTFILES                                #
+#|# Source our dotfiles so changes are available       #
+########################################################
+function source-dotfiles(){
+	source ~/.bash_aliases
+	source ~/.bash_functions
+	source ~/.bash_exports
 }
 
 ########################################################
@@ -97,27 +107,27 @@ whatis $file
 
 # Show bookmarks list and allow to cd into selected folder
 function bm() {
-local dest_dir=$(bm-ls | fzf )
-if [[ $dest_dir != '' ]]; then
-	eval cd $dest_dir
-fi
+	local dest_dir=$(bm-ls | fzf --tac --cycle)
+	if [[ $dest_dir != '' ]]; then
+		eval cd $dest_dir
+	fi
 }
 
 # ADD current dir to bookmarks list
 function bm-add () {
-local curr_dir="${PWD}"
-local curr_entry=$curr_dir
-#if there's comments - add them
-if [[ $# -ne 0 ]]; then
-	curr_entry=$curr_dir" # $*"
-fi
+	local curr_dir="${PWD}"
+	local curr_entry=$curr_dir
+	#if there's comments - add them
+	if [[ $# -ne 0 ]]; then
+		curr_entry=$curr_dir" # $*"
+	fi
 
-if ! grep -Fxq "$curr_dir" $BM_DIRECTORY; then
-	echo "$curr_entry" >> $BM_DIRECTORY
-	echo "$curr_dir added to bookmarks"
-else
-	echo "$curr_dir already in bookmarks"
-fi
+	if ! grep -Fxq "$curr_dir" $BM_DIRECTORY; then
+		echo "$curr_entry" >> $BM_DIRECTORY
+		echo "$curr_dir added to bookmarks"
+	else
+		echo "$curr_dir already in bookmarks"
+	fi
 }
 
 # EDIT bookmarks list
@@ -128,11 +138,11 @@ function bm-cat () { cat $BM_DIRECTORY | sed '/^\s*$/d'; }
 
 # LIST bookmarks (and treats output to fzf)
 function bm-ls () {
-if [ ! -r $BM_DIRECTORY ]; then
-	echo "There's no $BM_DIRECTORY"
-	exit 1
-fi
+	if [ ! -r $BM_DIRECTORY ]; then
+		echo "There's no $BM_DIRECTORY"
+		exit 1
+	fi
 
-#cat bookmarks | remove whole line comments | remove empty lines
-bm-cat $BM_DIRECTORY | sed 's/^#.*//g' | sed '/^\s*$/d'
+	#cat bookmarks | remove whole line comments | remove empty lines
+	bm-cat $BM_DIRECTORY | sed 's/^#.*//g' | sed '/^\s*$/d'
 }
