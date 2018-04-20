@@ -25,17 +25,21 @@ if command -v dnsdomainname >/dev/null; then
 fi
 
 ########################################################
-#|# General, PATH	                                   #
+#|# General, PATH	                               #
 ########################################################
+[ -e "/etc/DIR_COLORS" ] && DIR_COLORS="/etc/DIR_COLORS"
+[ -e "$HOME/.dircolors" ] && DIR_COLORS="$HOME/.dircolors"
+[ -e "$DIR_COLORS" ] || DIR_COLORS=""
+eval "`dircolors -b $DIR_COLORS`"
+
 alias dirbashrc="grep -nT '^#|' ~/.bash*"
 alias bashrc="vim ~/.bashrc"
-alias rebash='source ~/.bashrc'
 
 # Prompt
-export PS1='\[\033[38;5;12m\][\[\]\[\033[38;5;10m\]\u\[\]\[\033[38;5;12m\]@\[\]\[\033[38;5;7m\]\h\[\]\[\033[38;5;12m\]]\[\]\[\033[38;5;15m\]  \[\]\[\033[38;5;7m\]\w\[\]\[\033[38;5;12m\]\n>\[\]\[\033[38;5;10m\]|\$?\$\[\]\[\033[38;5;15m\] \[\]'
+export PS1='\[\033[38;5;12m\][\[\033[38;5;10m\]\u\[\033[38;5;12m\]@\[\033[38;5;7m\]\h\[\033[38;5;12m\]]\[\033[38;5;15m\] \[\033[38;5;7m\]\w\[\033[38;5;12m\]\n|$?>\[\033[38;5;10m\]\$\[\033[38;5;15m\] '
 
 ########################################################
-#|# Bash configs	                                   #
+#|# Bash configs	                               #
 ########################################################
 
 shopt -s cdspell
@@ -58,7 +62,7 @@ bind '"\e[B":history-search-forward'
 ########################################################
 
 ########################################################
-#|## MILNAS											   #
+#|## MILNAS - casa					#
 ########################################################
 if [[ "x$(hostname)" = "xarchThrone" ]]; then
     #Load all bash personal scripts 
@@ -66,5 +70,19 @@ if [[ "x$(hostname)" = "xarchThrone" ]]; then
 	do
 		source ~/.${script}
 	done
+fi
+
+########################################################
+#|## work						#
+########################################################
+if [[ "x$(hostname)" = "xarchOfThrones" ]]; then
+	#Load all bash personal scripts 
+	for script in bash_aliases bash_functions bash_exports
+	do
+		source ~/.${script}
+	done
+
+	#Turn off the bell sound
+	xset -b
 fi
 

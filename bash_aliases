@@ -55,7 +55,7 @@ alias packers='packer -S'
 ########################################################
 #|## OS Management                                     #
 ########################################################
-alias df='df -h | sort -k5 -r'
+alias df='df -hT | sort -k5 -r'
 alias du='du -hc'
 alias free='free -hlt'
 alias pkill='pkill -e'
