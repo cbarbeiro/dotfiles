@@ -41,16 +41,17 @@ alias findexe='find $(path) -type f -prune -executable | cut -d':' -f1 | \grep -
 ########################################################
 #|## Package Management                                #
 ########################################################
-alias pacmanss='pacman -Ss'
-alias pacmans='sudo pacman -S'
-alias pacmanu='sudo pacman -U'
-alias pacmansyu='sudo pacman -Syu --ignore $PACMAN_IGNORE'
-alias pacmanrns='sudo pacman -Rns'
-alias pacmanqs='pacman -Qs' #Search packages locally
-alias pacmanqo='pacman -Qo' #Which package owns file?
-alias pacmanqi='pacman -Qi' #Info about a package
-alias packerss='packer -Ss'
-alias packers='packer -S'
+alias pacmanss='pacman -Ss'	#Search packages in official repos
+alias pacmans='sudo pacman -S'	#Install packages from official repos
+alias pacmanu='sudo pacman -U'	#Install local packages
+alias pacmansyu='sudo pacman -Syu'	#Update system ignoring $PACMAN_IGNORE
+alias pacmanrns='sudo pacman -Rns'	#Remove package and dependecies
+alias pacmanqs='pacman -Qs'	#Search packages locally
+alias pacmanqo='pacman -Qo'	#Which package owns file?
+alias pacmanqo='pacman -Ql'	#Which files are owned by package?
+alias pacmanqi='pacman -Qi'	#Info about a package
+alias packerss='packer -Ss'	#Search packages in AUR
+alias packers='packer -S'	#Install package from AUR
 
 ########################################################
 #|## OS Management                                     #
@@ -74,6 +75,7 @@ alias term='gnome-terminal'
 #|## SSH                                               #
 ########################################################
 alias ssh-agent='exec ssh-agent bash -i <<< "echo Secure Session; exec </dev/tty"'
+alias ssh-add-isilva='ssh-add ~/.ssh/isilva_wit'
 alias ssh-list='ssh-add -l'
 alias ssh-lock='ssh-add -x'
 alias ssh-unlock='ssh-add -X'
@@ -81,7 +83,6 @@ alias ssh-unlock='ssh-add -X'
 ########################################################
 #|## ChromeCast                                        #
 ########################################################
-alias cast='castnow'
 alias cast-transcode='castnow --transcoder ffmpeg --transcode'
 alias cast-gnome='gnomecast &&'
 alias cast-converter='chromecastize.sh --mkv'
@@ -89,6 +90,11 @@ alias cast-converter='chromecastize.sh --mkv'
 # Make the bash feel smoother
 # correct common typos
 alias sl='ls'
+alias ks='ls'
 alias ivm='vim'
 alias dc='cd'
 alias db='bd'
+alias gut='git'
+alias giy='git'
+alias exot='exit'
+alias exut='exit'
