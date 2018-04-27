@@ -29,7 +29,6 @@ fi
 ########################################################
 [ -e "/etc/DIR_COLORS" ] && DIR_COLORS="/etc/DIR_COLORS"
 [ -e "$HOME/.dircolors" ] && DIR_COLORS="$HOME/.dircolors"
-[ -e "$DIR_COLORS" ] || DIR_COLORS=""
 eval "`dircolors -b $DIR_COLORS`"
 
 alias dirbashrc="grep -nT '^#|' ~/.bash*"
@@ -70,19 +69,22 @@ if [[ "x$(hostname)" = "xarchThrone" ]]; then
 	do
 		source ~/.${script}
 	done
+    #Load personal configs
+	export PACMAN_IGNORE="ttf-croscore,noto-fonts"
+	alias pacmansyu='sudo pacman -Syu --ignore $PACMAN_IGNORE'
 fi
 
 ########################################################
 #|## work						#
 ########################################################
 if [[ "x$(hostname)" = "xarchOfThrones" ]]; then
-	#Load all bash personal scripts 
+    #Load all bash personal scripts 
 	for script in bash_aliases bash_functions bash_exports
 	do
 		source ~/.${script}
 	done
-
-	#Turn off the bell sound
+    #Turn off the bell sound
 	xset -b
+    #Load work configs
 fi
 
