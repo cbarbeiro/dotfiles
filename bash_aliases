@@ -35,7 +35,7 @@ alias mv='mv -iv'
 alias rm='rm -dIv --preserve-root'
 alias ln='ln -iv'
 alias mkdir='mkdir -pv'
-alias diff='colordiff'
+alias diff='colordiff -W $(( $(tput cols) - 2))'
 alias findexe='find $(path) -type f -prune -executable | cut -d':' -f1 | \grep --color=always'
 
 ########################################################
@@ -48,7 +48,7 @@ alias pacmansyu='sudo pacman -Syu'	#Update system
 alias pacmanrns='sudo pacman -Rns'	#Remove package and dependecies
 alias pacmanqs='pacman -Qs'	#Search packages locally
 alias pacmanqo='pacman -Qo'	#Which package owns file?
-alias pacmanqo='pacman -Ql'	#Which files are owned by package?
+alias pacmanql='pacman -Ql'	#Which files are owned by package?
 alias pacmanqi='pacman -Qi'	#Info about a package
 alias packerss='packer -Ss'	#Search packages in AUR
 alias packers='packer -S'	#Install package from AUR
@@ -65,13 +65,15 @@ alias pkill='pkill -e'
 ########################################################
 #|## Miscellaneous                                     #
 ########################################################
+alias calc="galculator"
 alias getmyip='curl http://ipecho.net/plain; echo -e \"\n\"'
 alias echo="echo -e"
 alias edit-aliases='vim ~/.bash_aliases'
 alias edit-exports='vim ~/.bash_exports'
 alias edit-functions='vim ~/.bash_functions'
-alias paclog='paclog --color | less -R'
 alias term='gnome-terminal'
+alias src='src-hilite-lesspipe.sh' 
+
 ########################################################
 #|## SSH                                               #
 ########################################################
@@ -89,12 +91,16 @@ alias cast-converter='chromecastize.sh --mkv'
 
 # Make the bash feel smoother
 # correct common typos
+alias l='ls'
 alias sl='ls'
 alias ks='ls'
+alias çç='ll'
 alias ivm='vim'
 alias dc='cd'
+alias c='cd'
 alias db='bd'
 alias gut='git'
 alias giy='git'
 alias exot='exit'
 alias exut='exit'
+alias eixt='exit'
