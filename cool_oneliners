@@ -1,0 +1,4 @@
+#Organize text into columns
+pr -a --columns=X | less
+#Substitute text (regex)
+sed 's|this|tothis'
