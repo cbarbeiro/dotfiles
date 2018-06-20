@@ -2,6 +2,7 @@
 export HISTCONTROL=ignoredups
 export HISTIGNORE="&:ls:exit:[ ]*"
 export HISTSIZE=99999
+export PROMPT_COMMAND="history -a; history -n"
 
 export EDITOR='vim'
 export VISUAL='vim' 
@@ -10,11 +11,12 @@ export VISUAL='vim'
 #|## PATH VARS                                         #
 ########################################################
 export DOTFILES_PATH="$(echo $HOME)/dotfiles"
+export BM_DIR_GLOBAL=~/.dir_bookmarks_global
 export BM_DIRECTORY=~/.dir_bookmarks
-export WIT_HOME="$(echo $HOME)/WIT"
 
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk/
 export CDPATH=".:~/"
-export PATH="$PATH:$DOTFILES_PATH:$WIT_HOME"
+export PATH="$PATH:$JAVA_HOME:$DOTFILES_PATH"
 
 ########################################################
 #|## Ruby                                              #
@@ -29,7 +31,6 @@ fi
 ########################################################
 if [ -x /usr/bin/android-studio ]
 then
-	export ANDROID_HOME=/opt/android-sdk
 	export ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
 fi
 

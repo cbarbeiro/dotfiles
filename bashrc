@@ -85,7 +85,9 @@ if [[ "x$(hostname)" = "xarchOfThrones" ]]; then
     #Turn off the bell sound
 	xset -b
     #Load work configs
-    export ANDROID_HOME=/home/ivo/Android/Sdk
+	export ANDROID_HOME=/home/ivo/Android/Sdk
+	export WIT_HOME=~/WIT
+	export PATH="$PATH:$WIT_HOME"
     
         #Load all bash personal scripts 
 	for script in bash_aliases bash_functions bash_exports
