@@ -10,13 +10,13 @@ export VISUAL='vim'
 ########################################################
 #|## PATH VARS                                         #
 ########################################################
-export DOTFILES_PATH="$(echo $HOME)/dotfiles"
+export DOTFILES="$HOME/dotfiles"
 export BM_DIR_GLOBAL=~/.dir_bookmarks_global
 export BM_DIRECTORY=~/.dir_bookmarks
 
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk/
 export CDPATH=".:~/"
-export PATH="$PATH:$JAVA_HOME:$DOTFILES_PATH"
+export PATH="$PATH:$JAVA_HOME"
 
 ########################################################
 #|## Ruby                                              #

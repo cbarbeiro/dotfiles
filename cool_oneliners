@@ -1,4 +1,8 @@
 #Organize text into columns
 pr -a --columns=X | less
+
 #Substitute text (regex)
-sed 's|this|tothis'
+sed 's/this/tothis/(g=globally|i=insensitive)'
+
+#delete matching line
+sed 'd/regex/'
