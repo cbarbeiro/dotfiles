@@ -31,9 +31,6 @@ fi
 [ -e "$HOME/.dircolors" ] && DIR_COLORS="$HOME/.dircolors"
 eval "`dircolors -b $DIR_COLORS`"
 
-alias dirbashrc="grep -nT '^#|' ~/.bash*"
-alias bashrc="vim ~/.bashrc"
-
 # Prompt
 export PS1='\[\033[38;5;12m\][\[\033[38;5;10m\]\u\[\033[38;5;12m\]@\[\033[38;5;7m\]\h\[\033[38;5;12m\]]\[\033[38;5;15m\] \[\033[38;5;7m\]\w\[\033[38;5;12m\]\n|$?>\[\033[38;5;10m\]\$\[\033[38;5;15m\] '
 
@@ -66,7 +63,7 @@ bind '"\e[B":history-search-forward'
 if [[ "x$(hostname)" = "xarchThrone" ]]; then
     #Load personal configs
     export ANDROID_HOME=/opt/android-sdk
-	export PACMAN_IGNORE="ttf-croscore,noto-fonts"
+	export PACMAN_IGNORE="\"\""
 	alias pacmansyu='sudo pacman -Syu --ignore $PACMAN_IGNORE'
 	
 	#Load all bash personal scripts 

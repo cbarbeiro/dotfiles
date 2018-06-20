@@ -50,6 +50,7 @@ alias pacmanqs='pacman -Qs'	#Search packages locally
 alias pacmanqo='pacman -Qo'	#Which package owns file?
 alias pacmanql='pacman -Ql'	#Which files are owned by package?
 alias pacmanqi='pacman -Qi'	#Info about a package
+alias pacmanorphans='pacman -Qtdq' #List orphan packages
 alias packerss='packer -Ss'	#Search packages in AUR
 alias packers='packer -S'	#Install package from AUR
 alias paclog='paclog --color | less -R' #Read pacman log
@@ -73,6 +74,7 @@ alias edit-ol='vim $DOTFILES/cool_oneliners'
 alias edit-aliases='vim ~/.bash_aliases'
 alias edit-exports='vim ~/.bash_exports'
 alias edit-functions='vim ~/.bash_functions'
+alias edit-bashrc="vim ~/.bashrc"
 alias term='gnome-terminal'
 alias src='src-hilite-lesspipe.sh' 
 
