@@ -71,6 +71,21 @@ alias gg="git gui"
 alias gk="gitk"
 
 ########################################################
+#|## SSH                                               #
+########################################################
+alias ssh-agent='exec ssh-agent bash -i <<< "echo Secure Session; exec </dev/tty"'
+alias ssh-add-isilva='ssh-add ~/.ssh/isilva_wit'
+alias ssh-list='ssh-add -l'
+alias ssh-lock='ssh-add -x'
+alias ssh-unlock='ssh-add -X'
+
+########################################################
+#|## ChromeCast                                        #
+########################################################
+alias cast-transcode='castnow --transcoder ffmpeg --transcode'
+alias cast-converter='chromecastize.sh --mkv'
+
+########################################################
 #|## Miscellaneous                                     #
 ########################################################
 alias calc="galculator"
@@ -85,20 +100,6 @@ alias edit-bashrc="vim ~/.bashrc"
 alias term='gnome-terminal'
 alias src='src-hilite-lesspipe.sh' 
 
-########################################################
-#|## SSH                                               #
-########################################################
-alias ssh-agent='exec ssh-agent bash -i <<< "echo Secure Session; exec </dev/tty"'
-alias ssh-add-isilva='ssh-add ~/.ssh/isilva_wit'
-alias ssh-list='ssh-add -l'
-alias ssh-lock='ssh-add -x'
-alias ssh-unlock='ssh-add -X'
-
-########################################################
-#|## ChromeCast                                        #
-########################################################
-alias cast-transcode='castnow --transcoder ffmpeg --transcode'
-alias cast-converter='chromecastize.sh --mkv'
 
 # Make the bash feel smoother
 # correct common typos
