@@ -83,7 +83,7 @@ if [[ "x$(hostname)" = "xarchOfThrones" ]]; then
 	xset -b
     #Load work configs
 	export ANDROID_HOME=/home/ivo/Android/Sdk
-	export ANDROID_BIN="$ANDROID_HOME/platform_tools:$ANDROID_HOME/tools/bin"
+	export ANDROID_BIN="$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools/bin"
 	export WIT_HOME=~/WIT
 	export WMC_SCRIPTS=~/WIT/witlab-wmc/temp/scripts/
 	export PATH="$PATH:$WIT_HOME:$WMC_SCRIPTS:$ANDROID_BIN"
