@@ -84,7 +84,7 @@ if [[ "x$(hostname)" = "xarchOfThrones" ]]; then
     #Load work configs
 	export ANDROID_HOME=/home/ivo/Android/Sdk
 	export WIT_HOME=~/WIT
-	export PATH="$PATH:$WIT_HOME"
+	export PATH="$PATH:$WIT_HOME:$ANDROID_HOME/tools/bin"
     
         #Load all bash personal scripts 
 	for script in bash_aliases bash_functions bash_exports
