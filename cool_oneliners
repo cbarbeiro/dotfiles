@@ -6,3 +6,7 @@ sed 's/this/tothis/(g=globally|i=insensitive)'
 
 #delete matching line
 sed 'd/regex/'
+
+#run a command periodically.
+#this specifically tells sync progress
+watch grep -e Dirty: -e Writeback: /proc/meminfo
