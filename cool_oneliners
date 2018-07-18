@@ -10,3 +10,21 @@ sed 'd/regex/'
 #run a command periodically.
 #this specifically tells sync progress
 watch grep -e Dirty: -e Writeback: /proc/meminfo
+
+#Run last command as root
+sudo !!
+
+#Run last command but replace every foo with bar
+!!:gs/foo/bar
+
+#Stopwatch
+time read
+
+#Save a file edited in vim without needing permissions
+:w !sudo tee %
+
+#Backup a file
+cp filename{,.bak}
+
+#Print last command beguinning with foo
+!foo:p

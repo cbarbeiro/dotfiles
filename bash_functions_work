@@ -1,0 +1,47 @@
+# @OverridingBase
+# Source our dotfiles so changes are available
+function source-dotfiles () {
+	source ~/.bash_aliases
+	source ~/.bash_functions
+	source ~/.bash_exports
+
+	source ~/.bash_aliases_work
+	source ~/.bash_functions_work
+	source ~/.bash_exports_work
+}
+
+# @OverridingBase
+# EDIT bookmarks list - work version
+function bm-edit () { vim $BM_DIR $BM_DIR_WORK; }
+
+# @OverridingBase
+# CAT bookmarks list
+function bm-cat () {
+	if [ ! -z $BM_DIR_WORK ]; then
+		cat $BM_DIR $BM_DIR_WORK | sed '/^\s*$/d'
+	else
+		cat $BM_DIR | sed '/^\s*$/d'
+	fi
+}
+
+# ADD current dir to work bookmarks list
+function bm-add-work() {
+	if [ -z $BM_DIR_WORK ]; then
+		echo "\$BM_DIR_WORK is not defined"
+		return 1
+	fi
+
+	local curr_dir="${PWD}"
+	local curr_entry=$curr_dir
+	#if there's comments - add them
+	if [[ $# -ne 0 ]]; then
+		curr_entry=$curr_dir" # $*"
+	fi
+
+	if ! grep -Fxq "$curr_dir" $BM_DIR_WORK; then
+		echo "$curr_entry" >> $BM_DIR_WORK
+		echo "$curr_dir added to bookmarks"
+	else
+		echo "$curr_dir already in bookmarks"
+	fi
+}

@@ -135,37 +135,12 @@ function bm-add () {
 	fi
 }
 
-# ADD current dir to work bookmarks list
-function bm-add-work() {
-	if [ -z $BM_DIR_WORK ]; then
-		echo "\$BM_DIR_WORK is not defined"
-		return 1
-	fi
-
-	local curr_dir="${PWD}"
-	local curr_entry=$curr_dir
-	#if there's comments - add them
-	if [[ $# -ne 0 ]]; then
-		curr_entry=$curr_dir" # $*"
-	fi
-
-	if ! grep -Fxq "$curr_dir" $BM_DIR_WORK; then
-		echo "$curr_entry" >> $BM_DIR_WORK
-		echo "$curr_dir added to bookmarks"
-	else
-		echo "$curr_dir already in bookmarks"
-	fi
-}
 # EDIT bookmarks list
-function bm-edit () { vim $BM_DIR $BM_DIR_WORK; }
+function bm-edit () { vim $BM_DIR; }
 
 # CAT bookmarks list
 function bm-cat () {
-	if [ ! -z $BM_DIR_WORK ]; then
-		cat $BM_DIR $BM_DIR_WORK | sed '/^\s*$/d'
-	else
-		cat $BM_DIR | sed '/^\s*$/d'
-	fi
+	cat $BM_DIR | sed '/^\s*$/d'
 }
 
 # LIST bookmarks (and treats output to fzf)
