@@ -98,6 +98,11 @@ function source-dotfiles(){
 	source ~/.bash_aliases
 	source ~/.bash_functions
 	source ~/.bash_exports
+
+	if [ ! -z $BM_DIR_WORK ]; then
+		source ~/.bash_aliases_work
+		source ~/.bash_exports_work
+	fi
 }
 
 ########################################################
@@ -113,7 +118,7 @@ function bm() {
 	fi
 }
 
-# ADD current dir to bookmarks list
+# ADD current dir to global bookmarks list
 function bm-add () {
 	local curr_dir="${PWD}"
 	local curr_entry=$curr_dir
@@ -122,29 +127,56 @@ function bm-add () {
 		curr_entry=$curr_dir" # $*"
 	fi
 
-	if ! grep -Fxq "$curr_dir" $BM_DIRECTORY; then
-		echo "$curr_entry" >> $BM_DIRECTORY
+	if ! grep -Fxq "$curr_dir" $BM_DIR; then
+		echo "$curr_entry" >> $BM_DIR
 		echo "$curr_dir added to bookmarks"
 	else
 		echo "$curr_dir already in bookmarks"
 	fi
 }
 
+# ADD current dir to work bookmarks list
+function bm-add-work() {
+	if [ -z $BM_DIR_WORK ]; then
+		echo "\$BM_DIR_WORK is not defined"
+		return 1
+	fi
+
+	local curr_dir="${PWD}"
+	local curr_entry=$curr_dir
+	#if there's comments - add them
+	if [[ $# -ne 0 ]]; then
+		curr_entry=$curr_dir" # $*"
+	fi
+
+	if ! grep -Fxq "$curr_dir" $BM_DIR_WORK; then
+		echo "$curr_entry" >> $BM_DIR_WORK
+		echo "$curr_dir added to bookmarks"
+	else
+		echo "$curr_dir already in bookmarks"
+	fi
+}
 # EDIT bookmarks list
-function bm-edit () { vim $BM_DIRECTORY; }
+function bm-edit () { vim $BM_DIR $BM_DIR_WORK; }
 
 # CAT bookmarks list
-function bm-cat () { cat $BM_DIRECTORY | sed '/^\s*$/d'; }
+function bm-cat () {
+	if [ $BM_DIR_WORK ]; then
+		cat $BM_DIR $BM_DIR_WORK | sed '/^\s*$/d'
+	else
+		cat $BM_DIR | sed '/^\s*$/d'
+	fi
+}
 
 # LIST bookmarks (and treats output to fzf)
 function bm-ls () {
-	if [ ! -r $BM_DIRECTORY ]; then
-		echo "There's no $BM_DIRECTORY"
-		exit 1
+	if [ ! -r $BM_DIR ]; then
+		echo "\$BM_DIR is not defined"
+		return 1
 	fi
 
 	#cat bookmarks | remove whole line comments | remove empty lines
-	bm-cat $BM_DIRECTORY | sed 's/^#.*//g' | sed '/^\s*$/d'
+	bm-cat | sed 's/^#.*//g' | sed '/^\s*$/d'
 }
 
 ########################################################

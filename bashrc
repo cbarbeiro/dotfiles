@@ -89,7 +89,7 @@ if [[ "x$(hostname)" = "xarchOfThrones" ]]; then
 	export PATH="$PATH:$WIT_HOME:$WMC_SCRIPTS:$ANDROID_BIN"
     
         #Load all bash personal scripts 
-	for script in bash_aliases bash_functions bash_exports
+	for script in bash_aliases bash_aliases_work bash_exports bash_exports_work bash_functions
 	do
 		source ~/.${script}
 	done
