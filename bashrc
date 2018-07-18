@@ -79,17 +79,17 @@ fi
 #|## work						#
 ########################################################
 if [[ "x$(hostname)" = "xarchOfThrones" ]]; then
-    #Turn off the bell sound
+	#Turn off the bell sound
 	xset -b
-    #Load work configs
-	export ANDROID_HOME=/home/ivo/Android/Sdk
-	export ANDROID_BIN="$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools/bin"
-	export WIT_HOME=~/WIT
-	export WMC_SCRIPTS=~/WIT/witlab-wmc/temp/scripts/
-	export PATH="$PATH:$WIT_HOME:$WMC_SCRIPTS:$ANDROID_BIN"
-    
-        #Load all bash personal scripts 
-	for script in bash_aliases bash_aliases_work bash_exports bash_exports_work bash_functions bash_functions_work
+
+	#Load all bash personal scripts 
+	for script in bash_aliases bash_functions bash_exports
+	do
+		source ~/.${script}
+	done
+
+	#Load work configs
+	for script in bash_aliases_work bash_exports_work bash_functions_work
 	do
 		source ~/.${script}
 	done

@@ -23,6 +23,7 @@ alias ls='ls --color=always --format=vertical --group-directories-first'
 alias ll='ls -l'
 alias la='ls -la'
 alias lsdir='ls -l --color=always | grep -e "^d"'  # list only directories
+alias lsdirall='ls -la --color=always | grep -e "^d"'  # list all (incl. hidden) directories
 alias lsfiles='ls -l --color=always | grep -ve "^d"'  # list only files
 alias lsfilesall='ls -la --color=always | grep -ve "^d"'  # list all (incl. hidden) files
 

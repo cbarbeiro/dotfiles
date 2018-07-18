@@ -1,1 +1,1 @@
-alias lswork='to be added'
+alias wmc_setup="bash $WMC_SCRIPTS/setup_project_wit_qa.sh"
