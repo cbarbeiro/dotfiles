@@ -98,11 +98,6 @@ function source-dotfiles(){
 	source ~/.bash_aliases
 	source ~/.bash_functions
 	source ~/.bash_exports
-
-	if [ ! -z $BM_DIR_WORK ]; then
-		source ~/.bash_aliases_work
-		source ~/.bash_exports_work
-	fi
 }
 
 ########################################################
