@@ -161,7 +161,7 @@ function bm-edit () { vim $BM_DIR $BM_DIR_WORK; }
 
 # CAT bookmarks list
 function bm-cat () {
-	if [ $BM_DIR_WORK ]; then
+	if [ ! -z $BM_DIR_WORK ]; then
 		cat $BM_DIR $BM_DIR_WORK | sed '/^\s*$/d'
 	else
 		cat $BM_DIR | sed '/^\s*$/d'

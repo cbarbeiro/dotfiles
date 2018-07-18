@@ -36,7 +36,7 @@ if [[ $profile = "work" ]]; then
 
 	echo -e "\nCopying work configs...\n"
 
-	for dotfile in bash_aliases_work bash_exports_work dir_bookmarks_work
+	for dotfile in bash_aliases_work bash_exports_work bash_functions_work dir_bookmarks_work
 	do
 		if [[ -L ~/.${dotfile} ]]; then
 			rm ~/.${dotfile}
