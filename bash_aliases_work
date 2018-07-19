@@ -1,1 +1,4 @@
-alias lswork='to be added'
+alias edit-aliases-work='vim ~/.bash_aliases_work'
+alias edit-exports-work='vim ~/.bash_exports_work'
+alias edit-functions-work='vim ~/.bash_functions_work'
+alias timer='bash $DOTFILES/timer.sh'

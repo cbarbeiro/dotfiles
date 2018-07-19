@@ -93,11 +93,8 @@ alias echo="echo -e"
 alias lsol='cat $DOTFILES/cool_oneliners'
 alias edit-ol='vim $DOTFILES/cool_oneliners'
 alias edit-aliases='vim ~/.bash_aliases'
-alias edit-aliases-work='vim ~/.bash_aliases_work'
 alias edit-exports='vim ~/.bash_exports'
-alias edit-exports-work=='vim ~/.bash_exports_work'
 alias edit-functions='vim ~/.bash_functions'
-alias edit-functions-work=='vim ~/.bash_functions_work'
 alias edit-bashrc="vim ~/.bashrc"
 alias term='gnome-terminal'
 alias src='src-hilite-lesspipe.sh' 
