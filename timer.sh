@@ -21,6 +21,11 @@ TURNOFFSCREEN=false
 HOLIDAY_ENTRY_START="08:00"
 HOLIDAY_ENTRY_STOP="16:00"
 
+#COMPATIBILITY
+if [[ "$OSTYPE" == "darwin"* ]; then
+       $IS_MAC=true
+fi
+
 ##############
 # FUNCTIONS
 ##############
@@ -49,12 +54,8 @@ function register_week() {
 function register_day() {
 #
 # check how to parse date for mac systems
-# if [[ "$OSTYPE" == "darwin"* ]; then
-#        $IS_MAC=true
-# fi
 #
-# epoch_time="$(date -j -f "%a %b %d %T %Z %Y" "Wed Dec 25 06:35:02 EST 2013" "+%s")"
-# a="$(date -r $epoch_time '+%F')
+# day="$(date -j -f "%Y-%m-%d" "2018-10-01" "+%F")"
 #
 	if [[ -z $1 ]]; then
 		echo "No date was given."
