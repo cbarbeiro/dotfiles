@@ -8,11 +8,12 @@ TEMP_DIR=/tmp/timer
 OUTPUT=$TEMP_DIR/report.txt
 START=$TEMP_DIR/.start
 
-#DEFAULT REPORTING
-BIZ_UNIT="RCS+"
-PRODUCT="RCS+"
-PM="Rui Gil"
-TASK="Development"
+#From this script will come these vars used to complete the report
+# $BIZ_UNIT
+# $PRODUCT
+# $PM
+# $TASK
+source biz_tags
 
 #MISC OPTIONS
 TURNOFFSCREEN=false
@@ -22,14 +23,21 @@ TURNOFFSCREEN=false
 ##############
 
 function register_time () {
+
+	if [[ -z $1 ]]; then
+		time_entry=$(date $1)
+	else
+		time_entry=$(echo $1)
+	fi
+
 	if [[ -e $START ]]; then
 		rm $START
-
-		printf $(date +%H:%M)\\t >> $OUTPUT
+		
+		printf $(echo $time_entry)\\t >> $OUTPUT
 		printf "$BIZ_UNIT\\t$PRODUCT\\t$PM\\t$TASK\\t\n" >> $OUTPUT
 		$DEBUG && echo -e "Task $TASK finished\n$(tail -1 $OUTPUT)"
 	else
-		printf $(date +%H:%M)\\t >> $OUTPUT
+		printf $(echo $time_entry)\\t >> $OUTPUT
 		touch $START
 		$DEBUG && echo "Task \"$TASK\" started at $(tail -1 $OUTPUT)"
 	fi
@@ -57,16 +65,20 @@ if [[ $1 = "-s" ]]; then
 
 #add time entry
 elif [[ $1 = "-a" ]]; then
-
-	register_time
+	
+	if [[ $2 = "-f" ]]; then
+		register_time $3
+	else
+		register_time
+	fi
 
 	#also turn screen off
-	if [[ $3 = "-x" ]]; then
+	if [[ $3 = "-x" ]] || [[ $4 = "-x" ]]; then
 		TURNOFFSCREEN=true
 	fi
 
 	#also log out
-	if [[ $2 = "-l" ]]; then
+	if [[ $2 = "-l" ]] || [[ $3 = "-l" ]]; then
 		$TURNOFFSCREEN && xset dpms force off;
 		cinnamon-screensaver-command -l;
 	fi
@@ -85,14 +97,15 @@ elif [[ $1 = "-call" ]]; then
 elif [[ $1 = "-h" ]] || [[ -z $1 ]]; then
 	printf "Application to report time entries of login and logout times.
 
-Usage: $0 [-s] [-c] [-call] [-a [-l [-x]] [-d] ]
+Usage: $0 [-s] [-c] [-call] [-a [-f entry] [-l [-x]] [-d] ]
 
 Options:
 -s	show report
 -c	clear temp files
 -call	clear temp and report file
--a	add entry
--l	logoff computer
+-a	add a time entry. Format = %H:%M
+-f	force an entry
+-l	logoff computer	
 -x	turn off the screen (only works with -l)
 -d	debug mode (only works with -a)\n"
 	exit
