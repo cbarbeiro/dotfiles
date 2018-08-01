@@ -41,12 +41,12 @@ if [[ $profile = "work" ]]; then
 		if [[ -L ~/.${dotfile} ]]; then
 			rm ~/.${dotfile}
 		fi
-		ln -sv $(pwd)/${dotfile} ~/.${dotfile}
+		ln -sv $(pwd)/work/${dotfile} ~/.${dotfile}
 	done
 fi
 
 echo    # move to a new line
-read -p "Install hard-copy to user root? [y/n] (root files only contain base files)" -n 1 -r
+read -p "Install hard-copy to user root? (will only copy base files) [y/n]" -n 1 -r
 echo    # move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
