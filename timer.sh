@@ -35,7 +35,7 @@ function register_week() {
 		echo $1 is NOT a valid YYYY-MM-DD date
 		exit
 	elif [[ $(date '+%u' -d $monday) != "1" ]]; then
-		echo -e "$1 is NOT a Monday.\nIn order to add a full holiweek insert the corresponding Monday.\n"
+		echo -e "$1 is NOT a Monday => $(date -d $monday)\nIn order to add a full holiweek insert the corresponding Monday.\n"
 		exit
 	fi
 
@@ -49,7 +49,11 @@ function register_week() {
 function register_day() {
 #
 # check how to parse date for mac systems
-# epoch_time="$(LANG=C TZ='EST' date -j -f "%a %b %d %T %Z %Y" "Wed Dec 25 06:35:02 EST 2013" "+%s")"
+# if [[ "$OSTYPE" == "darwin"* ]; then
+#        $IS_MAC=true
+# fi
+#
+# epoch_time="$(date -j -f "%a %b %d %T %Z %Y" "Wed Dec 25 06:35:02 EST 2013" "+%s")"
 # a="$(date -r $epoch_time '+%F')
 #
 	if [[ -z $1 ]]; then
