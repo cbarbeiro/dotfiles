@@ -22,7 +22,7 @@ HOLIDAY_ENTRY_START="08:00"
 HOLIDAY_ENTRY_STOP="16:00"
 
 #COMPATIBILITY
-if [[ "$OSTYPE" == "darwin"* ]; then
+if [[ "$OSTYPE" == "darwin"* ]]; then
        $IS_MAC=true
 fi
 
