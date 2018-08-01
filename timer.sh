@@ -8,11 +8,12 @@ TEMP_DIR=/tmp/timer
 OUTPUT=$TEMP_DIR/report.txt
 START=$TEMP_DIR/.start
 
-#DEFAULT REPORTING
-BIZ_UNIT="RCS+"
-PRODUCT="RCS+"
-PM="Rui Gil"
-TASK="Development"
+#From this script will come these vars used to complete the report
+# $BIZ_UNIT
+# $PRODUCT
+# $PM
+# $TASK
+source biz_tags
 
 #MISC OPTIONS
 TURNOFFSCREEN=false
