@@ -1,5 +1,13 @@
+#Work settings
 alias edit-aliases-work='vim ~/.bash_aliases_work'
 alias edit-exports-work='vim ~/.bash_exports_work'
 alias edit-functions-work='vim ~/.bash_functions_work'
-alias timer='bash $DOTFILES/timer.sh'
+
+#Time Tracking
+alias tt='bash $DOTFILES/timer.sh'
+alias tta='tt -a'
+alias ttf='tt -a -f'
+alias tts='tt -s'
+
+#WMC Scripts
 alias wmc_setup="bash $WMC_SCRIPTS/setup_project_wit_qa.sh"

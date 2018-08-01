@@ -8,12 +8,11 @@ TEMP_DIR=/tmp/timer
 OUTPUT=$TEMP_DIR/report.txt
 START=$TEMP_DIR/.start
 
-#From this script will come these vars used to complete the report
-# $BIZ_UNIT
-# $PRODUCT
-# $PM
-# $TASK
-source biz_tags
+#DEFAULT REPORTING
+COST_CENTER="Rui Gil"
+CUSTOMER_NAME="WIT Lab"
+PROJECT_NAME="RCS_App"
+TASK="WCS Development"
 
 #MISC OPTIONS
 TURNOFFSCREEN=false
@@ -32,12 +31,15 @@ function register_time () {
 
 	if [[ -e $START ]]; then
 		rm $START
-		
-		printf $(echo $time_entry)\\t >> $OUTPUT
-		printf "$BIZ_UNIT\\t$PRODUCT\\t$PM\\t$TASK\\t\n" >> $OUTPUT
+
+		printf $(date +%H:%M)\\t >> $OUTPUT
+		printf "$COST_CENTER\\t$CUSTOMER_NAME\\t$PROJECT_NAME\\t$TASK\\t\n" >> $OUTPUT
 		$DEBUG && echo -e "Task $TASK finished\n$(tail -1 $OUTPUT)"
 	else
-		printf $(echo $time_entry)\\t >> $OUTPUT
+		if [[ grep $(date +%d/%m/%Y) $OUTPUT > 0 ]]; then
+			date $"+%A (%d/%m/%Y)\n" >>$OUTPUT
+		fi
+		printf $(date +%H:%M)\\t >> $OUTPUT
 		touch $START
 		$DEBUG && echo "Task \"$TASK\" started at $(tail -1 $OUTPUT)"
 	fi
@@ -61,6 +63,7 @@ fi
 #show report
 if [[ $1 = "-s" ]]; then
 	cat $OUTPUT
+	echo -e "\nReport file path: $OUTPUT"
 	exit
 
 #add time entry
