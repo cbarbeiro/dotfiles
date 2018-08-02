@@ -17,6 +17,7 @@ BIZ_TAGS="$(dirname $0)/.biz_tags"
 source $BIZ_TAGS
 
 #MISC OPTIONS
+EPOCH="19700101"
 TURNOFFSCREEN=false
 HOLIDAY_ENTRY_START="08:00"
 HOLIDAY_ENTRY_STOP="16:00"
@@ -29,50 +30,85 @@ fi
 ##############
 # FUNCTIONS
 ##############
-function datediff() {
-    d1=$(date -d "$1" +%s)
-    d2=$(date -d "$2" +%s)
-    echo $(( (d2 - d1) / 60 / 60 )):$(( ( d2 - d1) / 60)) 
+
+#Input: "01:10"
+#Output: 4200
+function get_seconds(){
+	#replace ':' for a space and remove leading zeros
+	read -r h m <<< $(echo "$1" | tr ':' ' ' | sed -r 's/^[0]*//g')
+	echo $(((h*60*60)+(m*60)))
 }
 
-datediff $1 $2
-exit
+#START=$(get_seconds "10:05")
+#STOP=$(get_seconds "11:04")
+#DIFF=$((STOP-START))
+#echo $DIFF
+#echo "$((DIFF/60/60))h $(((DIFF/60)%60))m"
+#exit
+#
+#function datediff() {
+#    d1=$(date -d "$EPOCH $1" +%s)
+#    d2=$(date -d "$EPOCH $2" +%s)
+#    echo $(( (d2 - d1) / 60 / 60 )):$(( ( d2 - d1) / 60)) 
+#}
+#
+#datediff $1 $2
+#exit
 
 function calculate_total_time() {
 
-while IFS='' read -r line || [[ -n "$line" ]]; do
-	
-	echo "Text read from file: $line"
-	if [[ -z $line ]]; then
-		$DEBUG && echo "continuing..."
-		continue
-	fi
+	day_counter=0
+	while IFS='' read -r line || [[ -n "$line" ]]; do
+		
+		$DEBUG && echo -e "Line read from file: $line"
 
+		if [[ -z $line ]]; then
+			$DEBUG && echo "continuing..."
+			continue
+		fi
 
-	day_parsed=$(echo $line | sed 's/[^0-9\/]*//g' | tr '/' '\n' | tac | tr -d '\n')
-	$DEBUG && echo day_parsed=$day_parsed
+		day_parsed=$(echo -e $line | sed 's/[^0-9\/]*//g' | tr '/' '\n' | tac | tr -d '\n')
+		$DEBUG && echo day_parsed=$day_parsed
 
-	header=$([[ ! -z $day_parsed ]] && date $"+%A (%d/%m/%Y)" -d "$day_parsed" 2> /dev/null)
-	$DEBUG && echo header=$is_header
+		header=$([[ ! -z $day_parsed ]] && date $"+%A (%d/%m/%Y)" -d "$day_parsed" 2> /dev/null)
+		$DEBUG && echo header=$is_header
 
-	if [[ $line = $header ]]; then
-    		$DEBUG && echo "IS_HEADER"
-	elif [[ $line =~ ^([\d\:\s]*).*$ ]]; then
-    		$DEBUG && echo "IS_ENTRY"
-	fi 
+		if [[ $line = $header ]]; then
+			$DEBUG && echo "IS_HEADER"
 
-done < "$OUTPUT"
+			[[ $day_diff -gt 0 ]] && echo "$((day_diff/60/60))H $((day_diff/60%60))m"
 
-	#read line from report
-	#match against regex for header
-	# print counter
-	#reset duration counter
-	#match against regex for entry
-	# calculate diff in seconds
-	# print "total |" + line
-	# counter+=total
-	
-	#print report_counter
+		elif [[ $line =~ ^([\d\:\s]*).*$ ]]; then
+			$DEBUG && echo "IS_ENTRY"
+
+			#create array with the entry separated by spaces
+			columns=( $line )
+			$DEBUG && printf "ENTRY START=%s STOP=%s\n" ${columns[0]} ${columns[1]}
+			
+			entry_start=$(get_seconds "${columns[0]}")
+			entry_stop=$(get_seconds "${columns[1]}")
+			entry_diff=$((entry_stop - entry_start))
+
+			#update day counter
+			day_diff+=$entry_diff
+
+			#show counter for each entry
+			echo "$((entry_diff / 60 / 60))H $(((entry_diff / 60 ) % 60))m | $line"
+
+		fi 
+
+	done < "$OUTPUT"
+
+		#read line from report
+		#match against regex for header
+		# print counter
+		#reset duration counter
+		#match against regex for entry
+		# calculate diff in seconds
+		# print "total |" + line
+		# counter+=total
+		
+		#print report_counter
 
 
 }

@@ -41,7 +41,7 @@ if [[ $profile = "work" ]]; then
 		if [[ -L ~/.${dotfile} ]]; then
 			rm ~/.${dotfile}
 		fi
-		ln -sv $(pwd)/work/${dotfile} ~/.${dotfile}
+		ln -sv $(pwd)/work_env/${dotfile} ~/.${dotfile}
 	done
 fi
 
