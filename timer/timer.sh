@@ -29,6 +29,54 @@ fi
 ##############
 # FUNCTIONS
 ##############
+function datediff() {
+    d1=$(date -d "$1" +%s)
+    d2=$(date -d "$2" +%s)
+    echo $(( (d2 - d1) / 60 / 60 )):$(( ( d2 - d1) / 60)) 
+}
+
+datediff $1 $2
+exit
+
+function calculate_total_time() {
+
+while IFS='' read -r line || [[ -n "$line" ]]; do
+	
+	echo "Text read from file: $line"
+	if [[ -z $line ]]; then
+		$DEBUG && echo "continuing..."
+		continue
+	fi
+
+
+	day_parsed=$(echo $line | sed 's/[^0-9\/]*//g' | tr '/' '\n' | tac | tr -d '\n')
+	$DEBUG && echo day_parsed=$day_parsed
+
+	header=$([[ ! -z $day_parsed ]] && date $"+%A (%d/%m/%Y)" -d "$day_parsed" 2> /dev/null)
+	$DEBUG && echo header=$is_header
+
+	if [[ $line = $header ]]; then
+    		$DEBUG && echo "IS_HEADER"
+	elif [[ $line =~ ^([\d\:\s]*).*$ ]]; then
+    		$DEBUG && echo "IS_ENTRY"
+	fi 
+
+done < "$OUTPUT"
+
+	#read line from report
+	#match against regex for header
+	# print counter
+	#reset duration counter
+	#match against regex for entry
+	# calculate diff in seconds
+	# print "total |" + line
+	# counter+=total
+	
+	#print report_counter
+
+
+}
+
 function register_week() {
 	if [[ -z $1 ]]; then
 		echo "No date was given."
@@ -73,7 +121,7 @@ function register_day() {
 	$DEBUG && echo -e "\nHoliday Task \"$TASK_H\" added for day $day\n\n$(tail -2 $OUTPUT)"
 }
 
-function register_time() {
+function register_time_entry() {
 
 	if [[ -z $1 ]]; then
 		time_entry=$(date +"%H:%M")
@@ -126,9 +174,9 @@ if [[ $1 = "-s" ]]; then
 elif [[ $1 = "-a" ]]; then
 	
 	if [[ $2 = "-f" ]]; then
-		register_time $3
+		register_time_entry $3
 	else
-		register_time
+		register_time_entry
 	fi
 
 	#also turn screen off
@@ -149,6 +197,10 @@ elif [[ $1 = "-hd" ]]; then
 #report a whole week of holidays
 elif [[ $1 = "-hw" ]]; then
 	register_week $2
+
+#calculate total time of entries
+elif [[ $1 = "-t" ]]; then
+	calculate_total_time
 
 #edit report manually
 elif [[ $1 = "-e" ]]; then
@@ -175,10 +227,11 @@ elif [[ $1 = "-call" ]]; then
 elif [[ $1 = "-h" ]] || [[ -z $1 ]]; then
 	printf "Application to report time entries of login and logout times.
 
-Usage: $0 [-s] [-c] [-call] [-e] [-a [-f entry] [-l [-x]]] [-hd day | -hw day] [-d]
+Usage: $0 [-s] [-t] [-c] [-call] [-e] [-a [-f entry] [-l [-x]]] [-hd day | -hw day] [-d]
 
 Options:
 -s	show report
+-t	total of time entries in report
 -c	clear temp files
 -call	clear temp and report file
 -e	edit report file manually
