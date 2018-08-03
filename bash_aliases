@@ -101,6 +101,7 @@ alias edit-bashrc="vim ~/.bashrc"
 alias term='gnome-terminal'
 alias src='src-hilite-lesspipe.sh' 
 alias lessf='less +F'
+alias lessr='less -R'
 alias grep='grep --color=always -n'
 alias grepr='\grep --color=always -RnsI' #don't forget to add * after the #haystack
 

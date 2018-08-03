@@ -3,11 +3,21 @@
 #DEBUG MODE
 DEBUG=false
 
+#SCRIPT
+SCRIPT_NAME=$(basename $0 .sh)
+SCRIPT_DIR=$(dirname $0)
+
 #FILE OPTIONS
-TEMP_DIR=/tmp/timer
-OUTPUT=$TEMP_DIR/report.txt
-START=$TEMP_DIR/.start
+REPORT_DIR=/tmp/$SCRIPT_NAME
+REPORT_FILE=report.txt
+OUTPUT=$REPORT_DIR/$REPORT_FILE
+START=$REPORT_DIR/.start
+
+#CUSTOMIZABLE OPTIONS
 BIZ_TAGS="$(dirname $0)/.biz_tags"
+TURNOFFSCREEN=false
+HOLIDAY_ENTRY_START="08:00"
+HOLIDAY_ENTRY_STOP="16:00"
 
 #From this script will come these vars used to complete the report
 # $COST_CENTER && $COST_CENTER_H
@@ -16,16 +26,13 @@ BIZ_TAGS="$(dirname $0)/.biz_tags"
 # $TASK && $TASK_H
 source $BIZ_TAGS
 
-#MISC OPTIONS
-EPOCH="19700101"
-TURNOFFSCREEN=false
-HOLIDAY_ENTRY_START="08:00"
-HOLIDAY_ENTRY_STOP="16:00"
-
 #COMPATIBILITY
 if [[ "$OSTYPE" == "darwin"* ]]; then
-       $IS_MAC=true
+       IS_MAC=true
 fi
+
+#CONSTANTS
+EPOCH="19700101"
 
 ##############
 # FUNCTIONS
@@ -38,22 +45,6 @@ function get_seconds(){
 	read -r h m <<< $(echo "$1" | tr ':' ' ' | sed -r 's/^[0]*//g')
 	echo $(((h*60*60)+(m*60)))
 }
-
-#START=$(get_seconds "10:05")
-#STOP=$(get_seconds "11:04")
-#DIFF=$((STOP-START))
-#echo $DIFF
-#echo "$((DIFF/60/60))h $(((DIFF/60)%60))m"
-#exit
-#
-#function datediff() {
-#    d1=$(date -d "$EPOCH $1" +%s)
-#    d2=$(date -d "$EPOCH $2" +%s)
-#    echo $(( (d2 - d1) / 60 / 60 )):$(( ( d2 - d1) / 60)) 
-#}
-#
-#datediff $1 $2
-#exit
 
 function calculate_total_time() {
 	total_diff=0
@@ -193,8 +184,8 @@ function register_time_entry() {
 ############
 
 #Create temp dir if doesn't exist
-if [[ ! -d $TEMP_DIR ]]; then
-	mkdir $TEMP_DIR
+if [[ ! -d $REPORT_DIR ]]; then
+	mkdir $REPORT_DIR
 fi
 
 #if last argument is -d activate debug
@@ -257,7 +248,7 @@ elif [[ $1 = "-call" ]]; then
 	echo #newline
 	if [[ $REPLY =~ ^[Yy]$ ]]
 	then
-		rm -r $TEMP_DIR/
+		rm -r $REPORT_DIR/
 		echo "deleted timer directory (temp + report files)"
 	else
 		echo "clear skipped"
@@ -267,20 +258,20 @@ elif [[ $1 = "-call" ]]; then
 elif [[ $1 = "-h" ]] || [[ -z $1 ]]; then
 	printf "Application to report time entries of login and logout times.
 
-Usage: $0 [-s] [-t] [-c] [-call] [-e] [-a [-f entry] [-l [-x]]] [-hd day | -hw day] [-d]
+Usage: $(basename $0) [-s] [-e] [-a [-f entry] [-l [-x]]] [-t] [-hd day | -hw day] [-c] [-call] [-d]
 
 Options:
 -s	show report
--t	total of time entries in report
--c	clear temp files
--call	clear temp and report file
 -e	edit report file manually
 -a	add a time entry. Format = %%H:%%M
 -f	force an entry
--l	logoff computer	
--x	turn off the screen (only works with -l)
+-t	total of time entries in report
 -hd	add a \033[1mh\033[0moli\033[1md\033[0may entry for given day. Format = %%Y-%%m-%%d
 -hw	add a \033[1mh\033[0moli\033[1mw\033[0meek entry for given \033[1mMonday\033[0m. Format = %%Y-%%m-%%d
+-l	also logoff computer	(only works with -a)
+-x	also turn off the screen	(only works with -l)
+-c	clear temp files
+-call	clear temp and report file
 -d	debug mode\\n"
 	exit
 fi
