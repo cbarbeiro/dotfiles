@@ -265,7 +265,7 @@ elif [[ $1 = "-call" ]]; then
 
 #show help
 elif [[ $1 = "-h" ]] || [[ -z $1 ]]; then
-	printf "Application to report time entries of login and logout times.
+	printf "Application to report time entries of tasks.
 
 Usage: $0 [-s] [-t] [-c] [-call] [-e] [-a [-f entry] [-l [-x]]] [-hd day | -hw day] [-d]
 
