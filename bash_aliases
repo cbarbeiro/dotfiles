@@ -88,6 +88,7 @@ alias cast-converter='chromecastize.sh --mkv'
 ########################################################
 #|## Miscellaneous                                     #
 ########################################################
+alias source-work="source $DOTFILES/work_env/*"
 alias calc="galculator"
 alias getmyip='curl http://ipecho.net/plain; echo -e \"\n\"'
 alias echo="echo -e"
