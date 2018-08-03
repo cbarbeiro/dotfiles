@@ -56,8 +56,8 @@ function get_seconds(){
 #exit
 
 function calculate_total_time() {
-
-	day_counter=0
+	total_diff=0
+	day_diff=0
 	while IFS='' read -r line || [[ -n "$line" ]]; do
 		
 		$DEBUG && echo -e "Line read from file: $line"
@@ -66,6 +66,7 @@ function calculate_total_time() {
 			$DEBUG && echo "continuing..."
 			continue
 		fi
+
 
 		day_parsed=$(echo -e $line | sed 's/[^0-9\/]*//g' | tr '/' '\n' | tac | tr -d '\n')
 		$DEBUG && echo day_parsed=$day_parsed
@@ -76,7 +77,15 @@ function calculate_total_time() {
 		if [[ $line = $header ]]; then
 			$DEBUG && echo "IS_HEADER"
 
-			[[ $day_diff -gt 0 ]] && echo "$((day_diff/60/60))H $((day_diff/60%60))m"
+			if [[ $day_diff -gt 0 ]]; then
+				#print total time of last day parsed
+				echo -e "\nDay Total: $((day_diff/60/60))h $((day_diff/60%60))m\n"
+
+				#reset timer
+				day_diff=0
+			fi
+
+			echo -e "\n\t$header"
 
 		elif [[ $line =~ ^([\d\:\s]*).*$ ]]; then
 			$DEBUG && echo "IS_ENTRY"
@@ -89,28 +98,23 @@ function calculate_total_time() {
 			entry_stop=$(get_seconds "${columns[1]}")
 			entry_diff=$((entry_stop - entry_start))
 
-			#update day counter
-			day_diff+=$entry_diff
-
 			#show counter for each entry
-			echo "$((entry_diff / 60 / 60))H $(((entry_diff / 60 ) % 60))m | $line"
+			echo "$((entry_diff / 60 / 60))h $(((entry_diff / 60 ) % 60))m < $line"
 
+			#update day counter
+			day_diff=$((day_diff + entry_diff ))
+
+			#update total counter
+			total_diff=$((total_diff + entry_diff ))
 		fi 
 
 	done < "$OUTPUT"
 
-		#read line from report
-		#match against regex for header
-		# print counter
-		#reset duration counter
-		#match against regex for entry
-		# calculate diff in seconds
-		# print "total |" + line
-		# counter+=total
-		
-		#print report_counter
+	#print last day parsed
+	[[ $day_diff -gt 0 ]] && echo -e "\nDay Total: $((day_diff/60/60))h $((day_diff/60%60))m\n"
 
-
+	#print whole report time
+	[[ $total_diff -gt 0 ]] && echo -e "\nReport Total Time: $((total_diff/60/60))H $((total_diff/60%60))m\n"
 }
 
 function register_week() {
