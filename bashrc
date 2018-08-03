@@ -61,10 +61,8 @@ bind '"\e[B":history-search-forward'
 #|## MILNAS - casa					#
 ########################################################
 if [[ "x$(hostname)" = "xarchThrone" ]]; then
-    #Load personal configs
-    export ANDROID_HOME=/opt/android-sdk
-	export PACMAN_IGNORE="\"\""
-	alias pacmansyu='sudo pacman -Syu --ignore $PACMAN_IGNORE'
+	#Load personal configs
+	export ANDROID_HOME=/opt/android-sdk
 	
 	#Load all bash personal scripts 
 	for script in bash_aliases bash_functions bash_exports

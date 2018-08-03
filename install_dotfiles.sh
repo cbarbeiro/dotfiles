@@ -27,7 +27,7 @@ echo -e "Copying base configs...\n"
 for dotfile in bashrc bash_aliases bash_exports bash_functions dir_bookmarks #vimrc gitconfig htop
 do
 	if [[ -L ~/.${dotfile} ]]; then
-		rm ~/.${dotfile}
+		mv ~/.${dotfile} ~/.${dotfile}.oldd
 	fi
 	ln -sv $(pwd)/${dotfile} ~/.${dotfile}
 done
@@ -39,7 +39,7 @@ if [[ $profile = "work" ]]; then
 	for dotfile in bash_aliases_work bash_exports_work bash_functions_work dir_bookmarks_work
 	do
 		if [[ -L ~/.${dotfile} ]]; then
-			rm ~/.${dotfile}
+			mv ~/.${dotfile} ~/.${dotfile}.oldd
 		fi
 		ln -sv $(pwd)/work_env/${dotfile} ~/.${dotfile}
 	done
@@ -54,7 +54,7 @@ then
 	for dotfile in bashrc bash_aliases bash_exports bash_functions dir_bookmarks #vimrc gitconfig htop
 	do
 		if [[ -L /root/.${dotfile} ]]; then
-			sudo rm /root/.${dotfile}
+			sudo mv /root/.${dotfile} /root/.${dotfile}.oldd
 		fi
 		sudo cp -v $(pwd)/${dotfile} /root/.${dotfile}
 	done
