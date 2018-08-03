@@ -4,7 +4,7 @@ alias edit-exports-work='vim ~/.bash_exports_work'
 alias edit-functions-work='vim ~/.bash_functions_work'
 
 #Time Tracking
-alias tt='bash $DOTFILES/timer/timer.sh'
+alias tt='bash $DOTFILES/time_tracker/time_tracker.sh'
 alias tta='tt -a'
 alias ttf='tt -a -f'
 alias tts='tt -s'
