@@ -189,7 +189,7 @@ if [[ ! -d $REPORT_DIR ]]; then
 fi
 
 #if last argument is -d activate debug
-if [[ ${@: -1} = "-d" ]]; then
+if [[ ${@: -1} = "-v" ]]; then
 	DEBUG=true
 fi
 
@@ -237,13 +237,8 @@ elif [[ $1 = "-t" ]]; then
 elif [[ $1 = "-e" ]]; then
 	vim $OUTPUT
 
-#clear temp files
-elif [[ $1 = "-c" ]]; then
-	rm $START
-	echo "deleted temp files"
-
-#clear temp dir
-elif [[ $1 = "-call" ]]; then
+#clear temp and report files
+elif [[ $1 = "-d" ]]; then
 	read -p "This will clear everything including the report file. Are you sure? [y/N] " -n 1 -r
 	echo #newline
 	if [[ $REPLY =~ ^[Yy]$ ]]
@@ -258,7 +253,7 @@ elif [[ $1 = "-call" ]]; then
 elif [[ $1 = "-h" ]] || [[ -z $1 ]]; then
 	printf "Application to report time entries of login and logout times.
 
-Usage: $(basename $0) [-s] [-e] [-a [-f entry] [-l [-x]]] [-t] [-hd day | -hw day] [-c] [-call] [-d]
+Usage: $(basename $0) [-s] [-e] [-a [-f entry] [-l [-x]]] [-t] [-hd day | -hw day] [-d] [-v]
 
 Options:
 -s	show report
@@ -270,8 +265,7 @@ Options:
 -hw	add a \033[1mh\033[0moli\033[1mw\033[0meek entry for given \033[1mMonday\033[0m. Format = %%Y-%%m-%%d
 -l	also logoff computer	(only works with -a)
 -x	also turn off the screen	(only works with -l)
--c	clear temp files
--call	clear temp and report file
--d	debug mode\\n"
+-d	delete temp and report files
+-v	verbose mode\\n"
 	exit
 fi
