@@ -1,11 +1,10 @@
 #!/bin/bash
 
-#DEBUG MODE
-DEBUG=false
-
 #SCRIPT
 SCRIPT_NAME=$(basename $0 .sh)
 SCRIPT_DIR=$(dirname $0)
+MAIN_OPTS="aV:v:rdwesh"
+ADD_OPTS="t:f:ixl"
 
 #FILE OPTIONS
 REPORT_FILE=.report.txt
@@ -13,30 +12,103 @@ REPORT_DIR=~
 OUTPUT=$REPORT_DIR/$REPORT_FILE
 START=$REPORT_DIR/.start
 
+#CONSTANTS
+DEBUG=false
+EPOCH="19700101"
+NOW="now"
+INTERACTIVE_TAGS="INTERACTIVE_TAGS"
+HEADER_REGEX="^\w*\s[\/\(\)[:digit:]]+$"
+ENTRY_REGEX="^[[:digit:]\:\t]+[\w[:blank:]]+"
+EDITOR=${EDITOR:-vim}
+
+#CUSTOMIZABLE COMMANDS
+TURNOFFSCREEN_CMD="xset dpms force off"
+LOGOUT_CMD="cinnamon-screensaver-command -l"
+
 #CUSTOMIZABLE OPTIONS
-BIZ_TAGS="$(dirname $0)/.biz_tags"
 TURNOFFSCREEN=false
+LOGOUT=false
 HOLIDAY_ENTRY_START="08:00"
 HOLIDAY_ENTRY_STOP="16:00"
+
+#EXTERNAL BUSINESS TAGS
+COST_CENTERS="$SCRIPT_DIR/.cost_centers"
+CUSTOMERS="$SCRIPT_DIR/.customers"
+PROJECTS="$SCRIPT_DIR/.projects"
+TAGS="$SCRIPT_DIR/.tags"
 
 #From this script will come these vars used to complete the report
 # $COST_CENTER && $COST_CENTER_H
 # $CUSTOMER_NAME && $CUSTOMER_NAME_H
 # $PROJECT_NAME && $PROJECT_NAME_H
 # $TASK && $TASK_H
+BIZ_TAGS="$(dirname $0)/.biz_tags"
 source $BIZ_TAGS
-
-#CONSTANTS
-EPOCH="19700101"
-NOW="now"
 
 ##############
 # FUNCTIONS
 ##############
 
-function assertNotEmpty(){
-	if [[ -z $1 ]]; then
-		echo $2
+function show_usage(){
+    printf "Application to report time entries of working tasks.\nThe business tags and task name gets written when the task is finished.
+
+Usage: $(basename $0) [-a [-f time] [-t \"tag name\"] [-i] [-l] [-x]] [-s] [-e] [-w] [-v day] [-V monday] [-r] [-d] [-h]
+
+Options:
+-a	add a time entry now
+-f	force an entry. Format = %%H:%%M
+-t	add a task name instead of the default one
+-i	interactively choose every business tag
+-l	also logoff computer	(only works with -a. Useful in scripting.)
+-x	also turn off the screen	(only works with -l. Useful in scripting.)
+-v	add a vacation entry for the given day. Format = %%Y-%%m-%%d
+-V	add a vacation entry for a week. any given Monday. Format = %%Y-%%m-%%d
+-s	show report
+-e	edit report file manually
+-w	calculate total working time in the report
+-r	remove temp and report files
+-d	debug mode\\n"
+}
+
+function assert_not_empty(){
+	if [[ -z "$1" ]]; then
+		echo "$2"
+		exit
+	fi
+}
+
+function assert_valid_hour(){
+    assert_not_empty "$1" "No valid hour was given."
+
+    #Parse hour using date
+    hour_parsed=$(date +"%H:%M" -d "$1")
+
+    if [[ "$hour_parsed" != "$1" ]]; then
+        echo "$1 is NOT a valid HH:MM hour"
+        exit
+    fi
+}
+
+function assert_valid_date(){
+    assert_not_empty $1 "No valid date was given."
+
+    #Given day. Change '/' for '-'
+    day=$(echo "$1" | tr '/' '-')
+    #Parse day using date
+    day_parsed=$(date '+%F' -d $1)
+
+    if [[ "$day_parsed" != "$day" ]]; then
+        echo "$1 is NOT a valid YYYY-MM-DD date"
+        exit
+    fi
+}
+
+function assert_valid_monday(){
+    #Get weekday
+    weekday=$(date '+%u' -d "$1")
+
+    if [[ $weekday != "1" ]]; then
+		echo -e "$1 is NOT a Monday => $(date -d "$1")\nIn order to add a full holiweek insert the corresponding Monday.\n"
 		exit
 	fi
 }
@@ -45,8 +117,7 @@ function assertNotEmpty(){
 #Output: 4200
 function get_seconds(){
 	#replace ':' for a space and remove leading zeros
-	read -r h m <<< $(echo "$1" | tr ':' ' ' | sed -r 's/\b0?//g')
-	$DEBUG && echo "hours=$h minutes=$m"
+	read -r h m <<< $(echo "$1" | tr ':' ' ' | sed -E 's/\b0?//g')
 	echo $(( (h*60*60)+(m*60) ))
 }
 
@@ -55,7 +126,7 @@ function calculate_total_time() {
 	day_diff=0
 
 	while IFS='' read -r line || [[ -n "$line" ]]; do
-		
+
 		$DEBUG && echo -e "Line read from file: $line"
 
 		if [[ -z $line ]]; then
@@ -63,14 +134,7 @@ function calculate_total_time() {
 			continue
 		fi
 
-
-		day_parsed=$(echo -e $line | sed 's/[^0-9\/]*//g' | tr '/' '\n' | tac | tr -d '\n')
-		$DEBUG && echo "day_parsed=$day_parsed"
-
-		header=$([[ ! -z $day_parsed ]] && date $"+%A (%d/%m/%Y)" -d "$day_parsed" 2> /dev/null)
-		$DEBUG && echo "header=$header"
-
-		if [[ $line = $header ]]; then
+		if [[ "$line" =~ $HEADER_REGEX ]]; then
 			$DEBUG && echo "IS_HEADER"
 
 			if [[ $day_diff -gt 0 ]]; then
@@ -81,15 +145,15 @@ function calculate_total_time() {
 				day_diff=0
 			fi
 
-			echo -e "\n\t\t$header"
+			echo -e "\n\t\t$line"
 
-		elif [[ $line =~ ^([\d\:\s]*).*$ ]]; then
+		elif [[ "$line" =~ $ENTRY_REGEX ]]; then
 			$DEBUG && echo "IS_ENTRY"
 
 			#create array with the entry separated by spaces
 			columns=( $line )
 			$DEBUG && printf "ENTRY START=%s STOP=%s\n ${columns[0]} ${columns[1]}"
-			
+
 			entry_start=$(get_seconds "${columns[0]}")
 			entry_stop=$(get_seconds "${columns[1]}")
 			entry_diff=$((entry_stop - entry_start))
@@ -107,68 +171,54 @@ function calculate_total_time() {
 	done < "$OUTPUT"
 
 	#print last day parsed
-	[[ $day_diff -gt 0 ]] && echo -e "\nDay Total: $((day_diff/60/60))h $((day_diff/60%60))m\n"
+	[[ $day_diff -gt 0 ]] && echo -e "\nDay Total: $((day_diff/60/60))h $((day_diff/60%60))m"
 
 	#print whole report time
 	[[ $total_diff -gt 0 ]] && echo -e "\nReport Total Time: $((total_diff/60/60))H $((total_diff/60%60))m\n"
 }
 
 function register_holiweek() {
-
-    assertNotEmpty $1 "No date was given."
-
-	monday=$(date '+%F' -d $1)
-	if [[ "$monday" != "$1" ]]; then
-		echo "$1 is NOT a valid YYYY-MM-DD date"
-		exit
-	elif [[ $(date '+%u' -d $monday) != "1" ]]; then
-		echo -e "$1 is NOT a Monday => $(date -d $monday)\nIn order to add a full holiweek insert the corresponding Monday.\n"
-		exit
-	fi
+    assert_valid_date $1
+    assert_valid_monday $1
 
 	for i in {0..4}
 	do
-		next_day=$(date +%F -d "$monday + $i day")
+		next_day=$(date +%F -d "$1 + $i day")
 		register_holiday $next_day
 	done
 }
 
 function register_holiday() {
+   assert_valid_date $1
 
-    assertNotEmpty $1 "No date was given."
-
-	day=$(date '+%F' -d $1)
-	if [[ "$day" != "$1" ]]; then
-		echo "$1 is NOT a valid YYYY-MM-DD date"
-		exit
-	fi
-
-	echo -e "\n$(date $"+%A (%d/%m/%Y)" -d $day)" >> $OUTPUT
-	printf "$HOLIDAY_ENTRY_START\\t$HOLIDAY_ENTRY_STOP\\t$COST_CENTER_H\\t$CUSTOMER_NAME_H\\t$PROJECT_NAME_H\\t$TASK_H\\t\\n" >> $OUTPUT
-	echo -e "\nHoliday Task \"$TASK_H\" added for day $day\n\n$(tail -2 $OUTPUT)"
+	echo -e "\n$(date $"+%A (%d/%m/%Y)" -d $1)" >> $OUTPUT
+	printf "$HOLIDAY_ENTRY_START\\t$HOLIDAY_ENTRY_STOP\\t$COST_CENTER_H\\t$CUSTOMER_NAME_H\\t$PROJECT_NAME_H\\t$TASK_H\\n" >> $OUTPUT
+	echo -e "\nHoliday Task \"$TASK_H\" added for day $date\n\n$(tail -2 $OUTPUT)"
 }
 
 function register_time_entry() {
+    #Set default time entry as 'now'
+    time_entry=$(date +"%H:%M")
 
-    if [[ $1 = $NOW ]]; then
-		time_entry=$(date +"%H:%M")
-	else
+    if [[ $1 != $NOW ]]; then
 		time_entry=$(date +"%H:%M" -d "$1")
-
-        #if date is invalid, exit
-		[[ $time_entry != $1 ]] && exit
 	fi
 
-	if [[ $2 = "CHOOSE_TAGS" ]]; then
-		COST_CENTER=$(cat $SCRIPT_DIR/.cost_centers | fzf --tac --cycle)
-		CUSTOMER_NAME=$(cat $SCRIPT_DIR/.customers | fzf --tac --cycle)
-		PROJECT_NAME=$(cat $SCRIPT_DIR/.projects | fzf --tac --cycle)
-		TASK=$(cat $SCRIPT_DIR/.tags | fzf --tac --cycle --print-query)
-	elif [[ $2 = "TAG="* ]]; then
-		TASK=${2/"TAG="/""}
-	fi
+    assert_valid_hour "$time_entry"
 
 	if [[ -e $START ]]; then
+
+        #Check for TASK only if we're writing it...
+        if [[ $2 = $INTERACTIVE_TAGS ]]; then
+            COST_CENTER=$(cat $COST_CENTERS | fzf --tac --cycle)
+            CUSTOMER_NAME=$(cat $CUSTOMERS | fzf --tac --cycle)
+            PROJECT_NAME=$(cat $PROJECTS | fzf --tac --cycle)
+            TASK=$(cat $TAGS | fzf --tac --cycle --print-query | tr -d '\n')
+
+        elif [[ ! -z "$2" ]]; then
+            TASK="$2"
+        fi
+
 		rm $START
 
         # if subtraction is negative, means a day has passed.
@@ -180,7 +230,7 @@ function register_time_entry() {
 
             #end task for the day
             printf "23:59\t" >> $OUTPUT
-		    printf "$COST_CENTER\t$CUSTOMER_NAME\t$PROJECT_NAME\t$TASK\t\n" >> $OUTPUT
+		    printf "$COST_CENTER\t$CUSTOMER_NAME\t$PROJECT_NAME\t$TASK\n" >> $OUTPUT
 
 		    #add header for new day
 		    echo -e "\n$(date $"+%A (%d/%m/%Y)")" >> $OUTPUT
@@ -191,7 +241,7 @@ function register_time_entry() {
 
         #end task and append biz tags
 		printf "$time_entry\t" >> $OUTPUT
-		printf "$COST_CENTER\\t$CUSTOMER_NAME\\t$PROJECT_NAME\\t$TASK\\t\\n" >> $OUTPUT
+		printf "$COST_CENTER\t$CUSTOMER_NAME\t$PROJECT_NAME\t$TASK\t\n" >> $OUTPUT
 		echo -e "Task $TASK finished\n\n$(tail -1 $OUTPUT)"
 	else
 		#Grep the current day in the report file
@@ -200,9 +250,9 @@ function register_time_entry() {
 		if [ "$is_new_day" -ne 0 ]; then
 			echo -e "\n$(date $"+%A (%d/%m/%Y)")" >> $OUTPUT
 		fi
-		printf $(echo $time_entry)\\t >> $OUTPUT
+		printf "$time_entry\t" >> $OUTPUT
 		touch $START
-		echo "Task \"$TASK\" started at $(tail -1 $OUTPUT)"
+		echo "New task started at $(tail -1 $OUTPUT)"
 	fi
 }
 
@@ -217,102 +267,97 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
        IS_MAC=true
 fi
 
-##FOLDERS
-
-#if last argument is -d activate debug
-if [[ ${@: -1} = "-v" ]]; then
-	DEBUG=true
+#If no arguments are given, show_usage
+if [[ -z $1 ]]; then
+    show_usage
+    exit
 fi
 
 #OPTIONS
+while getopts "$MAIN_OPTS" opt; do
+    case $opt in
+        a)
+            #Keeps the time (start|end) of the task
+            TIME=$NOW
+            #Keeps the task setting option
+            TAG=""
 
-#Check first argument
-#show report
-if [[ $1 = "-s" ]]; then
-	cat $OUTPUT
-	echo -e "\n"
-	$DEBUG && echo "Report file path: $OUTPUT"
-	exit
+            while getopts "$ADD_OPTS" optA; do
+                case $optA in
+                    t)
+                        #Custom task name. TAG="custom value"
+                        TAG="$OPTARG"
+                        ;;
+                    f)
+                        #Custom time.
+                        TIME="$OPTARG"
+                        ;;
+                    i)
+                        if ! command -v fzf > /dev/null; then
+                            echo "This option depends on 'fzf'. Please install it first in order to use this."
+                            exit
+                        fi
 
-#add time entry
-elif [[ $1 = "-a" ]]; then
-	
-	if [[ $2 = "-f" ]] && [[ $4 = "-tn" ]]; then
-		register_time_entry "$3" "TAG=$5"
-		exit
-	elif [[ $2 = "-f" ]] && [[ $4 = "-i" ]]; then
-		register_time_entry "$3" "CHOOSE_TAGS"
-		exit
-	fi
+                        #Tags are chosen interactively
+                        TAG="$INTERACTIVE_TAGS"
+                        ;;
+                    x)
+                        #Turn off screen after appending entry.
+                        TURNOFFSCREEN=true
+                        ;;
+                    l)
+                        #Logout after appending entry.
+                        LOGOUT=true
+                        ;;
+                esac
+            done
 
-	if [[ $2 = "-f" ]]; then
-		register_time_entry "$3"
+            register_time_entry "$TIME" "$TAG"
 
-	elif [[ $2 = "-i" ]]; then
-	    # DEPENDENCIES
-        if ! command -v fzf > /dev/null; then
-            echo "This option depends on 'fzf'. Please install it first in order to use this."
-        fi
+            if [[ $TURNOFFSCREEN == true ]]; then
+                echo $TURNOFFSCREEN_CMD;
+            fi
 
-		register_time_entry $NOW "CHOOSE_TAGS"
+            if [[ $LOGOUT == true ]]; then
+                echo $LOGOUT_CMD;
+            fi
 
-	elif [[ $2 = "-tn" ]]; then
-		register_time_entry $NOW "TAG=$3"
-	else
-		register_time_entry $NOW
-	fi
-
-	#also turn screen off
-	if [[ $3 = "-x" ]] || [[ $4 = "-x" ]]; then
-		TURNOFFSCREEN=true
-	fi
-
-	#also log out
-	if [[ $2 = "-l" ]] || [[ $3 = "-l" ]]; then
-		$TURNOFFSCREEN && xset dpms force off;
-		cinnamon-screensaver-command -l;
-	fi
-
-#report a single holiday
-elif [[ $1 = "-hd" ]]; then
-	register_holiday $2
-
-#report a whole week of holidays
-elif [[ $1 = "-hw" ]]; then
-	register_holiweek $2
-
-#calculate total time of entries
-elif [[ $1 = "-t" ]]; then
-	calculate_total_time
-
-#edit report manually
-elif [[ $1 = "-e" ]]; then
-	vim $OUTPUT
-
-#clear temp and report files
-elif [[ $1 = "-d" ]]; then
-	echo "This will clear a temp file and the report file."
-	rm -i -v $OUTPUT $START
-
-#show help
-elif [[ $1 = "-h" ]] || [[ -z $1 ]]; then
-	printf "Application to report time entries of login and logout times.
-
-Usage: $(basename $0) [-s] [-e] [-a [-f entry] [-i] [-tn \"tag name\"] [-l [-x]]] [-t] [-hd day | -hw day] [-d] [-v]
-
-Options:
--s	show report
--e	edit report file manually
--a	add a time entry. Format = %%H:%%M
--f	force an entry
--tn	add a task name instead of the default one
--i	interactively choose every business tag
--t	total of time entries in report
--hd	add a \033[1mh\033[0moli\033[1md\033[0may entry for given day. Format = %%Y-%%m-%%d
--hw	add a \033[1mh\033[0moli\033[1mw\033[0meek entry for given \033[1mMonday\033[0m. Format = %%Y-%%m-%%d
--l	also logoff computer	(only works with -a)
--x	also turn off the screen	(only works with -l)
--d	delete temp and report files
--v	verbose mode\\n"
-	exit
-fi
+            ;;
+        v)
+            register_holiday $OPTARG
+            ;;
+        V)
+            register_holiweek $OPTARG
+            ;;
+        r)
+            echo "This will clear a temp file and the report file."
+            rm -i -v $OUTPUT $START
+            ;;
+        d)
+            DEBUG=true
+            set -x
+            ;;
+        w)
+            calculate_total_time
+            ;;
+        e)
+            $EDITOR $OUTPUT
+            ;;
+        s)
+            cat $OUTPUT
+            echo -e "\n"
+            $DEBUG && echo "Report file path: $OUTPUT"
+            ;;
+        h)
+            show_usage
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            exit 1
+            ;;
+        :)
+            echo "Option -$OPTARG requires an argument." >&2
+            exit 1
+            ;;
+    esac
+done
