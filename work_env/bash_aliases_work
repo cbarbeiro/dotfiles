@@ -8,6 +8,7 @@ alias tt='bash $DOTFILES/time_tracker/time_tracker.sh'
 alias tta='tt -a'
 alias ttf='tt -a -f'
 alias tts='tt -s'
+alias edit-tt='vim $DOTFILES/time_tracker/time_tracker.sh'
 
 #WMC Scripts
 alias wmc_setup="bash $WMC_SCRIPTS/setup_project_wit_qa.sh"
