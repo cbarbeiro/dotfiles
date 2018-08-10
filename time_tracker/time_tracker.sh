@@ -50,24 +50,57 @@ source $BIZ_TAGS
 ##############
 
 function show_usage(){
-    printf "Application to report time entries of working tasks.\nThe business tags and task name gets written when the task is finished.
+    printf "Application to report time entries of working tasks.\nTask details are written when the task is finished.
 
-Usage: $(basename $0) [-a [-f time] [-t \"tag name\"] [-i] [-l] [-x]] [-s] [-e] [-w] [-v day] [-V monday] [-r] [-d] [-h]
+Usage: $(basename $0) [-h] [-a [-f time] [-t \"tag name\"] [-i] [-l] [-x]] [-s] [-e] [-w] [-v day] [-V monday] [-r]
 
 Options:
 -a	add a time entry now
--f	force an entry. Format = %%H:%%M
--t	add a task name instead of the default one
--i	interactively choose every business tag
--l	also logoff computer	(only works with -a. Useful in scripting.)
--x	also turn off the screen	(only works with -l. Useful in scripting.)
+-f	with -a, force an entry. Format = %%H:%%M
+-t	with -a, add a task name instead of the default one
+-i	with -a, interactively choose every business tag
+-l	with -a, logoff computer after reporting
+-x	with -a, turn off the screen after reporting
 -v	add a vacation entry for the given day. Format = %%Y-%%m-%%d
 -V	add a vacation entry for a week. any given Monday. Format = %%Y-%%m-%%d
 -s	show report
 -e	edit report file manually
 -w	calculate total working time in the report
--r	remove temp and report files
--d	debug mode\\n"
+-r	remove temp and report files\\n"
+}
+
+# POSIX parse date function
+# input: parse_date "input_date" "output_format"
+# output: the result of the following date command
+#
+# Example of *BSD date
+# date -j "input_date" "+output_format"
+# Example of *nix date
+# date -d "input_date" "+output_format"
+function parse_date(){
+    output_format=$1
+    input_date=$2
+
+    date_command=( date )
+
+    if [[ ! -z "$output_format" ]]; then
+        date_command=( "${date_command[@]}" +"$output_format" )
+    fi
+
+    if [[ ! -z "$input_date" ]]; then
+
+        if [[ $IS_MAC = true ]]; then
+            date_command=( "${date_command[@]}" -j "$input_date" )
+        else
+            date_command=( "${date_command[@]}" -d "$input_date" )
+        fi
+
+    fi
+
+    $DEBUG && echo "date_command=${date_command[@]}" >&2
+
+    #Because of bash auto-quotation skillz, we need to use array expansion so it doesn't add unnecessary (and breaking) quotes
+    "${date_command[@]}"
 }
 
 function assert_not_empty(){
@@ -81,7 +114,7 @@ function assert_valid_hour(){
     assert_not_empty "$1" "No valid hour was given."
 
     #Parse hour using date
-    hour_parsed=$(date +"%H:%M" -d "$1")
+    hour_parsed=$(parse_date "%H:%M" $1)
 
     if [[ "$hour_parsed" != "$1" ]]; then
         echo "$1 is NOT a valid HH:MM hour"
@@ -95,7 +128,7 @@ function assert_valid_date(){
     #Given day. Change '/' for '-'
     day=$(echo "$1" | tr '/' '-')
     #Parse day using date
-    day_parsed=$(date '+%F' -d $1)
+    day_parsed=$(parse_date "%F" $1)
 
     if [[ "$day_parsed" != "$day" ]]; then
         echo "$1 is NOT a valid YYYY-MM-DD date"
@@ -105,10 +138,10 @@ function assert_valid_date(){
 
 function assert_valid_monday(){
     #Get weekday
-    weekday=$(date '+%u' -d "$1")
+    weekday=$(parse_date "%u" "$1")
 
     if [[ $weekday != "1" ]]; then
-		echo -e "$1 is NOT a Monday => $(date -d "$1")\nIn order to add a full holiweek insert the corresponding Monday.\n"
+		echo -e "$1 is NOT a Monday => $(parse_date "" $1)\nIn order to add a full holiweek insert the corresponding Monday.\n"
 		exit
 	fi
 }
@@ -183,7 +216,7 @@ function register_holiweek() {
 
 	for i in {0..4}
 	do
-		next_day=$(date +%F -d "$1 + $i day")
+		next_day=$(parse_date "%F" "$1 + $i day")
 		register_holiday $next_day
 	done
 }
@@ -191,20 +224,20 @@ function register_holiweek() {
 function register_holiday() {
    assert_valid_date $1
 
-	echo -e "\n$(date $"+%A (%d/%m/%Y)" -d $1)" >> $OUTPUT
+	echo -e "\n$(parse_date "%A (%d/%m/%Y)" $1)" >> $OUTPUT
 	printf "$HOLIDAY_ENTRY_START\\t$HOLIDAY_ENTRY_STOP\\t$COST_CENTER_H\\t$CUSTOMER_NAME_H\\t$PROJECT_NAME_H\\t$TASK_H\\n" >> $OUTPUT
-	echo -e "\nHoliday Task \"$TASK_H\" added for day $date\n\n$(tail -2 $OUTPUT)"
+	echo -e "\nHoliday Task \"$TASK_H\" added for day $1\n\n$(tail -2 $OUTPUT)"
 }
 
 function register_time_entry() {
     #Set default time entry as 'now'
-    time_entry=$(date +"%H:%M")
+    time_entry=$(parse_date "%H:%M")
 
     if [[ $1 != $NOW ]]; then
-		time_entry=$(date +"%H:%M" -d "$1")
+		time_entry=$(parse_date "%H:%M" $1)
 	fi
 
-    assert_valid_hour "$time_entry"
+    assert_valid_hour $time_entry
 
 	if [[ -e $START ]]; then
 
@@ -233,7 +266,7 @@ function register_time_entry() {
 		    printf "$COST_CENTER\t$CUSTOMER_NAME\t$PROJECT_NAME\t$TASK\n" >> $OUTPUT
 
 		    #add header for new day
-		    echo -e "\n$(date $"+%A (%d/%m/%Y)")" >> $OUTPUT
+		    echo -e "\n$(parse_date $"%A (%d/%m/%Y)")" >> $OUTPUT
 
 		    #start new task
 		    printf "00:01\t" >> $OUTPUT
@@ -245,10 +278,10 @@ function register_time_entry() {
 		echo -e "Task $TASK finished\n\n$(tail -1 $OUTPUT)"
 	else
 		#Grep the current day in the report file
-		[[ -e $OUTPUT ]] && grep -Fq $(date +"%d/%m/%Y") $OUTPUT
+		[[ -e $OUTPUT ]] && grep -Fq $(parse_date "%d/%m/%Y") $OUTPUT
 		is_new_day=$?
 		if [ "$is_new_day" -ne 0 ]; then
-			echo -e "\n$(date $"+%A (%d/%m/%Y)")" >> $OUTPUT
+			echo -e "\n$(parse_date $"%A (%d/%m/%Y)")" >> $OUTPUT
 		fi
 		printf "$time_entry\t" >> $OUTPUT
 		touch $START
@@ -350,10 +383,6 @@ while getopts "$MAIN_OPTS" opt; do
             ;;
         h)
             show_usage
-            ;;
-        \?)
-            echo "Invalid option: -$OPTARG" >&2
-            exit 1
             ;;
         :)
             echo "Option -$OPTARG requires an argument." >&2
