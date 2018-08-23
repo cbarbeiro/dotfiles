@@ -69,6 +69,9 @@ alias pkill='pkill -e'
 ########################################################
 alias gg="git gui"
 alias gk="gitk"
+alias gst="git status"
+alias gdiff="git diff"
+alias gpwd="git status | head -n1 | sed 's,On branch ,,'"
 
 ########################################################
 #|## SSH                                               #
@@ -104,6 +107,7 @@ alias lessf='less +F'
 alias lessr='less -R'
 alias grep='grep --color=always -n'
 alias grepr='\grep --color=always -RnsI' #don't forget to add * after the #haystack
+alias colorpicker='com.github.ronnydo.colorpicker'
 
 # Make the bash feel smoother
 # correct common typos

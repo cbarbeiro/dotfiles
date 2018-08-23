@@ -287,10 +287,10 @@ function register_time_entry() {
 
         #Check for TASK only if we're writing it...
         if [[ $2 = $INTERACTIVE_TAGS ]]; then
-            COST_CENTER=$(cat $COST_CENTERS | fzf --tac --cycle)
-            CUSTOMER_NAME=$(cat $CUSTOMERS | fzf --tac --cycle)
-            PROJECT_NAME=$(cat $PROJECTS | fzf --tac --cycle)
-            TASK=$(cat $TAGS | fzf --tac --cycle --print-query | tr -d '\n')
+            COST_CENTER=$(cat $COST_CENTERS | sed 's/^#.*//g' | sed '/^\s*$/d' | fzf --tac --cycle)
+            CUSTOMER_NAME=$(cat $CUSTOMERS | sed 's/^#.*//g' | sed '/^\s*$/d' | fzf --tac --cycle)
+            PROJECT_NAME=$(cat $PROJECTS | sed 's/^#.*//g' | sed '/^\s*$/d' | fzf --tac --cycle)
+            TASK=$(cat $TAGS | sed 's/^#.*//g' | sed '/^\s*$/d' | fzf --tac --cycle --print-query | tr -d '\n')
 
         elif [[ ! -z "$2" ]]; then
             TASK="$2"
@@ -476,6 +476,11 @@ fi
 ##USERDATA
 LOGIN=$(decode_base64 $USERNAME)
 PASS=$(decode_base64 $PASSWORD)
+
+if [[ "x"$LOGIN == "xCHANGE_ME" ]]; then
+    echo "Please update the config file with your credentials."
+    exit
+fi
 
 #If no arguments are given, show_usage
 if [[ -z $1 ]]; then
