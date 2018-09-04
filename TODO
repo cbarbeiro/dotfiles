@@ -2,3 +2,6 @@
 1) create pam_script so that on every login the timer script is ran
 
 #TIMER
+
+#LINT TALK
+check jenkins for failed jobs and eval
