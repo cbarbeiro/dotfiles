@@ -67,16 +67,47 @@ alias pkill='pkill -e'
 ########################################################
 #|## GIT                                               #
 ########################################################
-alias gg="git gui"
-alias gk="gitk"
-alias gst="git status"
-alias gdiff="git diff"
+alias gg='git gui'
+alias gk='gitk'
+alias gst='git status'
+alias gdiff='git diff'
 alias gpwd="git status | head -n1 | sed 's,On branch ,,'"
+alias gcd5='LAST_GIT_BRANCH=$(gpwd); git checkout 5.0/devel'
+alias gclb='__LGB=$(gpwd); git checkout $LAST_GIT_BRANCH; LAST_GIT_BRANCH=$__LGB'
+alias gf='git fetch'
+alias gfa='git fetch --all'
+alias gp='git pull'
+alias gpb='git push -u origin' #git push branch XXXX
+alias gpcb='git push -u origin $(gpwd)' #git push current branch
+
+alias gopt='git gc --aggressive --prune=now'
+alias gclean='git reset --hard | git clean -f -d'
+alias ghardclean='git clean -fdx'
+alias gremovelog='rm -f ~/Developer/WMC_Android_4_2/.git/gc.log && rm -f ~/Developer/WMC_Android_4_4/.git/gc.log && rm -f ~/Developer/WMC_Android_5_0/.git/gc.log'
+alias gmissingmr50='git log origin/4.4/devel ^origin/5.0/devel --no-merges'
+
+########################################################
+#|## CLIPBOARD                                         #
+########################################################
+alias cb_tosh='clipit -p > ~/Desktop/job_2.sh'
+alias cb_tolog='clipit -p > ~/Desktop/android.log'
+alias cb_tojava='clipit -p > ~/Desktop/class.java'
+
+########################################################
+#|## ADB                                               #
+########################################################
+alias adbi='adb install -r "$@"'
+alias adbr='adb kill-server & adb start-server'
+alias adbplug='adb shell dumpsys battery reset'
+alias adbunplug='adb shell dumpsys battery unplug'
+alias adbdozeon='adb shell dumpsys battery unplug && adb shell dumpsys deviceidle force-idle'
+alias adbdozeoff='adb shell dumpsys battery reset && adb shell dumpsys deviceidle disable'
 
 ########################################################
 #|## SSH                                               #
 ########################################################
-alias ssh-agent='exec ssh-agent bash -i <<< "echo Secure Session; exec </dev/tty"'
+alias ssh-agent='exec ssh-agent bash -i <<< "exec </dev/tty;"'
+alias ssh-init='exec ssh-agent bash -i <<< "exec </dev/tty; ssh-add-isilva"'
 alias ssh-add-isilva='ssh-add ~/.ssh/isilva_wit'
 alias ssh-list='ssh-add -l'
 alias ssh-lock='ssh-add -x'

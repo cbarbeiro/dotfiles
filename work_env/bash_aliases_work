@@ -1,9 +1,14 @@
-#Work settings
+
+########################################################
+#|# Work Settings                                      #
+########################################################
 alias edit-aliases-work='vim ~/.bash_aliases_work'
 alias edit-exports-work='vim ~/.bash_exports_work'
 alias edit-functions-work='vim ~/.bash_functions_work'
 
-#Time Tracking
+########################################################
+#|# Time Tracking                                      #
+########################################################
 alias tt='bash $DOTFILES/time_tracker/time_tracker.sh'
 alias tta='tt -a'
 alias ttf='tt -a -f'
@@ -11,5 +16,27 @@ alias tts='tt -s'
 alias edit-tt='vim $DOTFILES/time_tracker/time_tracker.sh'
 alias edit-tt-conf='vim $DOTFILES/time_tracker/.config'
 
-#WMC Scripts
+########################################################
+#|# Redmine                                            #
+########################################################
+alias wmc_branchname='python $WMC_SCRIPTS/branch_name.py "$@"'
+alias wmc_issuename='python $WMC_SCRIPTS/issue_name.py "$@"'
+alias wmc_redmine='sh $WMC_SCRIPTS/redmine.sh "$@"'
+alias wmc_gitlab='sh $WMC_SCRIPTS/gitlab.sh "$@"'
+
+########################################################
+#|# WMC Aliases                                        #
+########################################################
 alias wmc_setup="bash $WMC_SCRIPTS/setup_project_wit_qa.sh"
+alias wmc_sp='./setup_project.sh'
+alias wmc_release='./gradlew assembleRelease'
+alias wmc_buildNinstall='./gradlew installRcsplusWebCompanionOnSoundcodeOnDebug'
+alias wmc_cleanproject='find . -name "build*" -type d -exec rm -rf {} \;'
+alias wmc_optimizepng='find . -name "*.png" -exec zopflipng -y {} {} \;'
+alias wmc_traces='$WMC_SCRIPTS/traces.sh'
+alias wmc_logs='$WMC_SCRIPTS/ls-rcs-logs.sh'
+
+########################################################
+#|# Misc                                               #
+########################################################
+alias wmc_tintmodes="vimiv $WMC_SCRIPTS/tintMode.png"
