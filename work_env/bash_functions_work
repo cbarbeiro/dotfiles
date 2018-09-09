@@ -1,13 +1,13 @@
 # @OverridingBase
 # Source our dotfiles so changes are available
 function source-dotfiles () {
+	source ~/.bash_exports
 	source ~/.bash_aliases
 	source ~/.bash_functions
-	source ~/.bash_exports
 
+	source ~/.bash_exports_work
 	source ~/.bash_aliases_work
 	source ~/.bash_functions_work
-	source ~/.bash_exports_work
 }
 
 # @OverridingBase

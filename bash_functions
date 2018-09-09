@@ -95,9 +95,9 @@ function which(){
 #|# Source our dotfiles so changes are available       #
 ########################################################
 function source-dotfiles(){
+	source ~/.bash_exports
 	source ~/.bash_aliases
 	source ~/.bash_functions
-	source ~/.bash_exports
 }
 
 ########################################################

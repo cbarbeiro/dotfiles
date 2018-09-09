@@ -19,17 +19,16 @@ alias edit-tt-conf='vim $DOTFILES/time_tracker/.config'
 ########################################################
 #|# Redmine                                            #
 ########################################################
-alias wmc_branchname='python $WMC_SCRIPTS/branch_name.py "$@"'
-alias wmc_issuename='python $WMC_SCRIPTS/issue_name.py "$@"'
+alias wmc_branchname='python $WMC_SCRIPTS/Scripts/branch_name.py "$@"'
+alias wmc_issuename='python $WMC_SCRIPTS/Scripts/issue_name.py "$@"'
 alias wmc_redmine='sh $WMC_SCRIPTS/redmine.sh "$@"'
 alias wmc_gitlab='sh $WMC_SCRIPTS/gitlab.sh "$@"'
 
 ########################################################
 #|# WMC Aliases                                        #
 ########################################################
-alias wmc_setup="bash $WMC_SCRIPTS/setup_project_wit_qa.sh"
-alias wmc_sp='./setup_project.sh'
-alias wmc_release='./gradlew assembleRelease'
+alias wmc_sp="bash $WMC_SCRIPTS/setup_project_wit_qa.sh"
+alias wmc_sp_base='./setup_project.sh'
 alias wmc_buildNinstall='./gradlew installRcsplusWebCompanionOnSoundcodeOnDebug'
 alias wmc_cleanproject='find . -name "build*" -type d -exec rm -rf {} \;'
 alias wmc_optimizepng='find . -name "*.png" -exec zopflipng -y {} {} \;'
@@ -37,6 +36,15 @@ alias wmc_traces='$WMC_SCRIPTS/traces.sh'
 alias wmc_logs='$WMC_SCRIPTS/ls-rcs-logs.sh'
 
 ########################################################
+#|# Git                                                #
+########################################################
+alias gcd5='LAST_GIT_BRANCH=$(gpwd); gcd 5.0/devel'    # git cd 5.0/devel
+alias gcd44='LAST_GIT_BRANCH=$(gpwd); gcd 4.4/devel'    # git cd 5.0/devel
+alias gremovelog='rm -f $WMC_DEVEL/.git/gc.log && rm -f $WMC_DEVEL44/.git/gc.log'
+alias gmissingmr50='git log origin/4.4/devel ^origin/5.0/devel --no-merges'
+
+########################################################
 #|# Misc                                               #
 ########################################################
 alias wmc_tintmodes="vimiv $WMC_SCRIPTS/tintMode.png"
+alias colorpicker='com.github.ronnydo.colorpicker'
