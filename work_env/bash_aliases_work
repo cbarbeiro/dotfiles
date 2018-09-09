@@ -27,7 +27,7 @@ alias wmc_gitlab='sh $WMC_SCRIPTS/gitlab.sh "$@"'
 ########################################################
 #|# WMC Aliases                                        #
 ########################################################
-alias wmc_sp="bash $WMC_SCRIPTS/setup_project_wit_qa.sh"
+alias wmc_sp='bash $WMC_SCRIPTS/setup_project_wit_qa.sh'
 alias wmc_sp_base='./setup_project.sh'
 alias wmc_buildNinstall='./gradlew installRcsplusWebCompanionOnSoundcodeOnDebug'
 alias wmc_cleanproject='find . -name "build*" -type d -exec rm -rf {} \;'
@@ -46,5 +46,5 @@ alias gmissingmr50='git log origin/4.4/devel ^origin/5.0/devel --no-merges'
 ########################################################
 #|# Misc                                               #
 ########################################################
-alias wmc_tintmodes="vimiv $WMC_SCRIPTS/tintMode.png"
+alias wmc_tintmodes='vimiv $WMC_SCRIPTS/tintMode.png'
 alias colorpicker='com.github.ronnydo.colorpicker'
