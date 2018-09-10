@@ -19,9 +19,8 @@ alias edit-tt-conf='vim $DOTFILES/time_tracker/.config'
 ########################################################
 #|# Redmine                                            #
 ########################################################
-alias wmc_branchname='python $WMC_SCRIPTS/Scripts/branch_name.py "$@"'
-alias wmc_issuename='python $WMC_SCRIPTS/Scripts/issue_name.py "$@"'
-alias wmc_redmine='sh $WMC_SCRIPTS/redmine.sh "$@"'
+alias wmc_branchname='python $WMC_SCRIPTS/redmine_wit.py b "$@"'
+alias wmc_commitname='python $WMC_SCRIPTS/redmine_wit.py c "$@"'
 alias wmc_gitlab='sh $WMC_SCRIPTS/gitlab.sh "$@"'
 
 ########################################################
@@ -32,8 +31,7 @@ alias wmc_sp_base='./setup_project.sh'
 alias wmc_buildNinstall='./gradlew installRcsplusWebCompanionOnSoundcodeOnDebug'
 alias wmc_cleanproject='find . -name "build*" -type d -exec rm -rf {} \;'
 alias wmc_optimizepng='find . -name "*.png" -exec zopflipng -y {} {} \;'
-alias wmc_traces='$WMC_SCRIPTS/traces.sh'
-alias wmc_logs='$WMC_SCRIPTS/ls-rcs-logs.sh'
+alias wmc_logs='./$WMC_SCRIPTS/ls-rcs-logs.sh'
 
 ########################################################
 #|# Git                                                #
