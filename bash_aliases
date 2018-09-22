@@ -111,6 +111,9 @@ alias adbplug='adb shell dumpsys battery reset'
 alias adbunplug='adb shell dumpsys battery unplug'
 alias adbdozeon='adb shell dumpsys battery unplug && adb shell dumpsys deviceidle force-idle'
 alias adbdozeoff='adb shell dumpsys battery reset && adb shell dumpsys deviceidle disable'
+alias adbtext='adb shell input text "$@"'
+alias adbmem='adb shell dumpsys meminfo'
+alias adbcron='adb shell dumpsys alarm'
 
 ########################################################
 #|## SSH                                               #
@@ -131,12 +134,12 @@ alias cast-converter='chromecastize.sh --mkv'
 ########################################################
 #|## Miscellaneous                                     #
 ########################################################
-alias source-work='source $DOTFILES/work_env/*'
 alias calc='galculator'
 alias getmyip='curl http://ipecho.net/plain; echo -e \"\n\"'
 alias echo='echo -e'
 alias lsol='cat $DOTFILES/cool_oneliners'
 alias edit-ol='vim $DOTFILES/cool_oneliners'
+alias edit-todo='vim $DOTFILES/TODO'
 alias edit-aliases='vim ~/.bash_aliases'
 alias edit-exports='vim ~/.bash_exports'
 alias edit-functions='vim ~/.bash_functions'

@@ -2,6 +2,7 @@ export ANDROID_HOME=/home/ivo/Android/Sdk
 export ANDROID_BIN="$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools/bin"
 export BM_DIR_WORK=~/.dir_bookmarks_work
 export WIT_HOME=~/WIT
+export WIT_REPORTS=~/WIT/wit_reports
 export WMC_ROOT=$WIT_HOME/witlab-wmc
 export WMC_DEVEL=$WIT_ROOT/android
 export WMC_DEVEL44=$WIT_ROOT/android-4.4/android

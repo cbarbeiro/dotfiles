@@ -386,7 +386,7 @@ function submitReport {
     soap_report="/tmp/soap_report_$TIMESTAMP.xml"
     option="N"
 
-    echo "Now freely edit your report and leave what you want to send... Save the file."
+    echo "Now freely edit your report and save&quit when done."
     read -n 1
 
     while [[ "$option" == "${option#[Yy]}" ]]; do
@@ -394,7 +394,8 @@ function submitReport {
         cp $REPORT_FILE $temp_report
         vim $temp_report
         cat $temp_report
-        read -n 1 -p "This is what you're sending. Are you sure? [y/N] " option
+        echo -e "\nThis is what you're sending. "
+	read -n 1 -p "Are you sure? [y/N] " option
 
     done
 
@@ -415,9 +416,11 @@ function submitReport {
 	   </soapenv:Body>
 	</soapenv:Envelope>" > $soap_report
 
-	#RESULT=$(httpPostFile $TT_WS_SR $soap_report text/xml |  sed -e 's,.*<info>\([^<]*\)</info>.*,\1,g' 2>/dev/null)
+	RESULT=$(httpPostFile $TT_WS_SR $soap_report text/xml |  sed -e 's,.*<info>\([^<]*\)</info>.*,\1,g' 2>/dev/null)
 
-    cat $soap_report
+	if [[ $DEBUG ]]; then
+		cat $soap_report
+	fi
     
 	echo -e "\nSubmission result: \e[00;31m$RESULT \e[00m"
 

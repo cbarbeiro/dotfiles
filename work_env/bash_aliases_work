@@ -5,6 +5,7 @@
 alias edit-aliases-work='vim ~/.bash_aliases_work'
 alias edit-exports-work='vim ~/.bash_exports_work'
 alias edit-functions-work='vim ~/.bash_functions_work'
+alias edit-redmine-script='vim $WMC_SCRIPTS/redmine_wit.py'
 
 ########################################################
 #|# Time Tracking                                      #
@@ -19,9 +20,9 @@ alias edit-tt-conf='vim $DOTFILES/time_tracker/.config'
 ########################################################
 #|# Redmine                                            #
 ########################################################
+alias wmc_issues='python $WMC_SCRIPTS/redmine_wit.py i'
 alias wmc_branchname='python $WMC_SCRIPTS/redmine_wit.py b "$@"'
-alias wmc_commitname='python $WMC_SCRIPTS/redmine_wit.py c "$@"'
-alias wmc_gitlab='sh $WMC_SCRIPTS/gitlab.sh "$@"'
+alias wmc_commitmsg='python $WMC_SCRIPTS/redmine_wit.py c "$@"'
 
 ########################################################
 #|# WMC Aliases                                        #
@@ -29,6 +30,9 @@ alias wmc_gitlab='sh $WMC_SCRIPTS/gitlab.sh "$@"'
 alias wmc_sp='bash $WMC_SCRIPTS/setup_project_wit_qa.sh'
 alias wmc_sp_base='./setup_project.sh'
 alias wmc_buildNinstall='./gradlew installRcsplusWebCompanionOnSoundcodeOnDebug'
+alias wmc_lintDebug='./gradlew lintRcsplusWebCompanionOnSoundcodeOnDebug -b build.gradle'
+alias wmc_lintRelease='./gradlew lintRcsplusWebCompanionOnSoundcodeOnRelease -b build.gradle'
+alias wmc_lintCiRelease='./gradlew lintRcsplusWebCompanionOnSoundcodeOnCiRelease -b build.gradle'
 alias wmc_cleanproject='find . -name "build*" -type d -exec rm -rf {} \;'
 alias wmc_optimizepng='find . -name "*.png" -exec zopflipng -y {} {} \;'
 alias wmc_logs='./$WMC_SCRIPTS/ls-rcs-logs.sh'
@@ -36,10 +40,12 @@ alias wmc_logs='./$WMC_SCRIPTS/ls-rcs-logs.sh'
 ########################################################
 #|# Git                                                #
 ########################################################
+alias gcd44='LAST_GIT_BRANCH=$(gpwd); gcd 4.4/devel'    # git cd 4.4/devel
 alias gcd5='LAST_GIT_BRANCH=$(gpwd); gcd 5.0/devel'    # git cd 5.0/devel
-alias gcd44='LAST_GIT_BRANCH=$(gpwd); gcd 4.4/devel'    # git cd 5.0/devel
+alias gcd51='LAST_GIT_BRANCH=$(gpwd); gcd 5.1/devel'    # git cd 5.1/devel
 alias gremovelog='rm -f $WMC_DEVEL/.git/gc.log && rm -f $WMC_DEVEL44/.git/gc.log'
 alias gmissingmr50='git log origin/4.4/devel ^origin/5.0/devel --no-merges'
+alias gmissingmr51='git log origin/5.0/devel ^origin/5.1/devel --no-merges'
 
 ########################################################
 #|# Misc                                               #
