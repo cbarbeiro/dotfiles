@@ -1,10 +1,13 @@
 #Work bookmarks
 $HOME/WIT # WIT SOFTWARE ROOT
-$HOME/WIT/vdf_pt_epg_manager
 
 $HOME/WIT/witlab-wmc # ?root
-$HOME/WIT/witlab-wmc/android # ?5.0
-$HOME/WIT/witlab-wmc/android-4.4 # ?4.4
-$HOME/WIT/witlab-wmc/temp/trainingroom # ?trainingroom
+$HOME/WIT/witlab-wmc/android # ?5.1
+$HOME/WIT/witlab-wmc/android-2/android # ?5.0
+$HOME/WIT/witlab-wmc/temp/trainingroom
+$HOME/WIT/witlab-wmc/tasks
+$HOME/WIT/witlab-wmc/scripts
+$HOME/WIT/witlab-wmc/logs
+$HOME/WIT/witlab-wmc/stable
 
 #Recently Added
