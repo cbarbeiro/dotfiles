@@ -1,5 +1,12 @@
 #STUFF
 1) create pam_script so that on every login the timer script is ran
+2) replace initial path with $HOME when adding a new bookmark
 
 #TIMER
-add tags with fuzzy
+-m on mac
+-w weekly also
+-remove last entry || last X entries
+-a -i fuzzy clear search when picked
+
+#LINT TALK
+check jenkins for failed jobs and eval
