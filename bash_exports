@@ -12,6 +12,7 @@ export VISUAL='vim'
 ########################################################
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk/
 export ANDROID_HOME=/opt/android-sdk
+export ANDROID_BIN="$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools/bin"
 export DOTFILES="$HOME/dotfiles"
 export BM_DIR_GLOBAL=~/.dir_bookmarks
 export BM_DIR=$BM_DIR_GLOBAL

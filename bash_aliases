@@ -76,6 +76,8 @@ alias gdiff='git diff'
 alias gpwd="git status | head -n1 | sed 's,On branch ,,'"                           # git pwd
 alias gcd='LAST_GIT_BRANCH=$(gpwd); git checkout'
 alias gmkdir='git checkout --track '
+alias grmlocal='git branch -d'
+alias grmremote='git branch -dr'
 alias gclb='__LGB=$LAST_GIT_BRANCH; gcd $__LGB'   # git cd last branch
 alias glslocal='git branch'
 alias glsremote='git branch --remote'
@@ -94,9 +96,9 @@ alias ghist='git log -p --follow -- '
 ########################################################
 #|# CLIPBOARD                                          #
 ########################################################
-alias cb_tosh='clipit -p > ~/Desktop/job_2.sh'
-alias cb_tolog='clipit -p > ~/Desktop/android.log'
-alias cb_tojava='clipit -p > ~/Desktop/class.java'
+alias cb-tosh='clipit -p > ~/Desktop/job_2.sh'
+alias cb-tolog='clipit -p > ~/Desktop/android.log'
+alias cb-tojava='clipit -p > ~/Desktop/class.java'
 
 ########################################################
 #|# ADB                                                #
@@ -150,7 +152,7 @@ alias ss='ss -patun'
 alias tips='cat $DOTFILES/tips'
 alias tips-ol='cat $DOTFILES/cool_oneliners'
 alias tips-bash='grep -B1 -A5 "#|## Bash" $DOTFILES/tips'
-alias tips-alias='grep -B1 -A5 "#|## Alias" $DOTFILES/tips'
+alias tips-alias='grep -B1 -A10 "#|## Alias" $DOTFILES/tips'
 
 ########################################################
 #|# Dotfiles related                                   #
@@ -164,14 +166,13 @@ alias edit-bashrc='vim ~/.bashrc'
 
 alias grep-aliases='cat $DOTFILES/bash_aliases | grep '
 alias grep-exports='cat $DOTFILES/bash_exports | grep '
-alias grep-functions='cat $DOTFILES/bash_functions | grep '
+alias grep-functions='cat $DOTFILES/bash_functions | grep -C5 '
 alias grep-dotfiles='cat $DOTFILES/bash_* | grep'
 
-# Open any file with the default command for that file
-# alias open='xdg-open'
-
-# Make the bash feel smoother
-# correct common typos
+########################################################
+#|# Typos                                              #
+########################################################
+alias alais='alias'
 alias nmeo='nemo'
 alias neom='nemo'
 alias l='ls'
