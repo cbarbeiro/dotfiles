@@ -32,15 +32,15 @@ fi
 eval "`dircolors -b $DIR_COLORS`"
 
 # Terminal colors (e.g. echo "${COLOR_RED}foo").
-COLOR_RESET=$(tput sgr0)
-COLOR_BLACK=$(tput setaf 0)
-COLOR_RED=$(tput setaf 1)
-COLOR_GREEN=$(tput setaf 2)
-COLOR_YELLOW=$(tput setaf 3)
-COLOR_BLUE=$(tput setaf 4)
-COLOR_MAGENTA=$(tput setaf 5)
-COLOR_CYAN=$(tput setaf 6)
-COLOR_WHITE=$(tput setaf 7)
+C_RESET=$(tput sgr0)
+C_BLACK=$(tput setaf 0)
+C_RED=$(tput setaf 1)
+C_GREEN=$(tput setaf 2)
+C_YELLOW=$(tput setaf 3)
+C_BLUE=$(tput setaf 4)
+C_MAGENTA=$(tput setaf 5)
+C_CYAN=$(tput setaf 6)
+C_WHITE=$(tput setaf 7)
 
 # Prompt
 export PS1='\[\033[38;5;12m\][\[\033[38;5;10m\]\u\[\033[38;5;12m\]@\[\033[38;5;7m\]\h\[\033[38;5;12m\]]\[\033[38;5;15m\] \[\033[38;5;7m\]\w\[\033[38;5;12m\]\n|$?>\[\033[38;5;10m\]\$\[\033[38;5;15m\] '

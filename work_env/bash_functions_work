@@ -54,3 +54,63 @@ function get_log_entries(){
 	#LOGINLIST=$(last --time-format=iso --since 2018-04-01 ivo | head -n-2 | grep tty7 | egrep -v $'\(00:0[0-9]\)' | awk '{print $4,$6,$7,$8,$9,$10}')
 	cd -;
 }
+
+function adbetext(){
+	local text=$(cat <<< $(echo "$@" | sed 's, ,%s,g' ))
+	echo "Sending to device text=[$text]"
+	adb shell input text "$text"
+}
+
+function cp-stable-reports(){
+	if [[ $(basename $(pwd)) != "android" ]]; then
+		echo "You're probably not on the right folder"
+		exit
+	fi
+
+	#local version=$(gpwd | cut -d"/" -f1 | tr -d "_")
+	local last_reports=$(find ./build/5_0/reports -printf "%T@#%p \n" | sort -k1r | head -n2 | cut -f2 -d"#")
+
+	cp-stable ${last_reports%% *}
+	cp-stable ${last_reports#* }
+}
+
+function cp-stable-apk(){
+	if [[ $(basename $(pwd)) != "android" ]]; then
+		echo "You're probably not on the right folder"
+		exit
+	fi
+
+	#local version=$(gpwd | cut -d"/" -f1 | tr -d "_")
+	local last_apk=$(find . -name *.apk -type f -printf "%T@#%p \n" | sort -k1r | head -n1 | cut -f2 -d"#")
+
+	cp-stable $last_apk
+}
+
+function cp-stable(){
+	local fn=$(basename $1)
+	local fn_noext=${fn%.*}
+	local ext=${fn#*.}
+	local branch=$(gpwd | cut -d"/" -f2)
+
+	if [[ x$branch == x"devel" ]]; then
+		new_ext=$(gpwd | cut -d"/" -f1 | tr -d ".")"devel"$ext
+	elif [[ x$branch == x"task" ]]; then
+		new_ext=$(gpwd | cut -d"/" -f3 | cut -d"-" -f1).$ext
+	else
+		echo "Cannot understand which branch you're in"
+		exit
+	fi
+
+	cp $1 $WMC_ROOT/stable/$fn_noext.$new_ext
+}
+
+########################################################
+#|NAME: GIT                     				       #
+########################################################
+
+function gls() {
+	local dest_dir=$(glslocal | fzf --cycle)
+	if [[ $dest_dir != '' ]]; then
+		eval gcd $dest_dir
+	fi
+}

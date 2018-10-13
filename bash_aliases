@@ -1,13 +1,5 @@
 ########################################################
-#|## Alias Tips                                        #
-########################################################
-# Disable aliases by prefixing with '\':
-# $\grep
-# Do not save in history by prefixing with ' '(space):
-# $ grep
-
-########################################################
-#|## Folder Navigation                                 #
+#|# Folder Navigation                                  #
 ########################################################
 alias ..='bd'
 alias ...='cd ../../'
@@ -15,21 +7,22 @@ alias ....='cd ../../../'
 alias .....='cd ../../../../'
 alias ......='cd ../../../../../'
 alias dirs='dirs -v'
+alias nemo='nemo .'
 
 ########################################################
-#|## Listings                                          #
+#|# Listings                                           #
 ########################################################
-alias ls='ls --color=always --format=vertical --group-directories-first'
-alias ll='ls -l'
-alias la='ls -la'
-alias lr='ls -laR'
+alias ls='ls -AF --color=always --format=vertical --group-directories-first'
+alias ll='ls -lhF'
+alias la='ls -lhAF'
+alias lr='ls -lhAR'
 alias lsdir='ls -l --color=always | grep -e "^d"'  # list only directories
 alias lsdirall='ls -la --color=always | grep -e "^d"'  # list all (incl. hidden) directories
 alias lsfiles='ls -l --color=always | grep -ve "^d"'  # list only files
 alias lsfilesall='ls -la --color=always | grep -ve "^d"'  # list all (incl. hidden) files
 
 ########################################################
-#|## File Management                                   #
+#|# File Management                                    #
 ########################################################
 alias cp='cp -irv'
 alias mv='mv -iv'
@@ -40,7 +33,7 @@ alias diff='colordiff -W $(( $(tput cols) - 2))'
 alias findexe='find $(path) -type f -prune -executable | cut -d':' -f1 | \grep --color=always'
 
 ########################################################
-#|## Package Management                                #
+#|# Package Management                                 #
 ########################################################
 alias pacmanss='pacman -Ss'	#Search packages in official repos
 alias pacmans='sudo pacman -S'	#Install packages from official repos
@@ -58,7 +51,7 @@ alias packersyu='packer -Syu'	#Update system and AUR
 alias paclog='paclog --color | less -R' #Read pacman log
 
 ########################################################
-#|## OS Management                                     #
+#|# OS Management                                      #
 ########################################################
 alias df='df -hT | sort -k5 -r'
 alias du='du -hc'
@@ -73,20 +66,22 @@ alias fix-file-perms='find * -type d -print0 | xargs -0 chmod 0755'
 alias fix-dir-perms='find . -type f -print0 | xargs -0 chmod 0644'
 
 ########################################################
-#|## GIT                                               #
+#|# GIT                                                #
 ########################################################
+alias cdgitroot='cd "$(git rev-parse --show-toplevel 2> /dev/null)"'                  # git cd root of project
 alias gg='git gui'
 alias gk='gitk'
 alias gst='git status'
 alias gdiff='git diff'
 alias gpwd="git status | head -n1 | sed 's,On branch ,,'"                           # git pwd
-alias gcdroot='cd "$(git rev-parse --show-toplevel 2> /dev/null)"'                  # git cd root of project
-alias gclb='__LGB=$(gpwd); git checkout $LAST_GIT_BRANCH; LAST_GIT_BRANCH=$__LGB'   # git cd last branch
-alias gcd='git checkout'
-alias gmkdir='git checkout -b'
+alias gcd='LAST_GIT_BRANCH=$(gpwd); git checkout'
+alias gmkdir='git checkout --track '
+alias gclb='__LGB=$LAST_GIT_BRANCH; gcd $__LGB'   # git cd last branch
+alias glslocal='git branch'
+alias glsremote='git branch --remote'
 alias gf='git fetch'
 alias gfa='git fetch --all'
-alias gp='git pull'
+alias gu='git pull'
 alias gpb='git push -u origin'                          # git push branch insert-branch-name
 alias gpcb='git push -u origin $(gpwd)'                 # git push current branch
 alias gclean='git reset --hard | git clean -f -d'       # resets to last local commit. deletes untracked files/dirs.
@@ -94,19 +89,20 @@ alias ghardclean='git clean -fdx'                       # removes gitignored ent
 alias ggc='git gc --aggressive --prune=now'             # optimizes local repo
 alias glog="git log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"  # Compact, colorized git log
 alias gtree='git log --graph --full-history --all --color --pretty=format:"%x1b[31m%h%x09%x1b[32m%d%x1b[0m%x20%s"' # Visualise git log tree
+alias ghist='git log -p --follow -- '
 
 ########################################################
-#|## CLIPBOARD                                         #
+#|# CLIPBOARD                                          #
 ########################################################
 alias cb_tosh='clipit -p > ~/Desktop/job_2.sh'
 alias cb_tolog='clipit -p > ~/Desktop/android.log'
 alias cb_tojava='clipit -p > ~/Desktop/class.java'
 
 ########################################################
-#|## ADB                                               #
+#|# ADB                                                #
 ########################################################
 alias adbi='adb install -r "$@"'
-alias adbr='adb kill-server & adb start-server'
+alias adbrestart='adb kill-server & adb start-server'
 alias adbplug='adb shell dumpsys battery reset'
 alias adbunplug='adb shell dumpsys battery unplug'
 alias adbdozeon='adb shell dumpsys battery unplug && adb shell dumpsys deviceidle force-idle'
@@ -116,7 +112,7 @@ alias adbmem='adb shell dumpsys meminfo'
 alias adbcron='adb shell dumpsys alarm'
 
 ########################################################
-#|## SSH                                               #
+#|# SSH                                                #
 ########################################################
 alias ssh-agent='exec ssh-agent bash -i <<< "exec </dev/tty;"'
 alias ssh-init='exec ssh-agent bash -i <<< "exec </dev/tty; ssh-add-isilva"'
@@ -126,24 +122,18 @@ alias ssh-lock='ssh-add -x'
 alias ssh-unlock='ssh-add -X'
 
 ########################################################
-#|## ChromeCast                                        #
+#|# ChromeCast                                         #
 ########################################################
 alias cast-transcode='castnow --transcoder ffmpeg --transcode'
 alias cast-converter='chromecastize.sh --mkv'
 
 ########################################################
-#|## Miscellaneous                                     #
+#|# Miscellaneous                                      #
 ########################################################
 alias calc='galculator'
 alias getmyip='curl http://ipecho.net/plain; echo -e \"\n\"'
 alias echo='echo -e'
-alias lsol='cat $DOTFILES/cool_oneliners'
-alias edit-ol='vim $DOTFILES/cool_oneliners'
-alias edit-todo='vim $DOTFILES/TODO'
-alias edit-aliases='vim ~/.bash_aliases'
-alias edit-exports='vim ~/.bash_exports'
-alias edit-functions='vim ~/.bash_functions'
-alias edit-bashrc='vim ~/.bashrc'
+alias ncdu='ncdu --color dark'
 alias term='gnome-terminal'
 alias src='src-hilite-lesspipe.sh'
 alias lessf='less +F'
@@ -152,12 +142,38 @@ alias grep='grep --color=always -n'
 alias grepr='\grep --color=always -RnsI' # don't forget to add * after the #haystack
 alias youtube-dl='youtube-dl -vcti -R5 --write-description --write-info-json --all-subs --write-thumbnail --add-metadata'
 alias date-iso='date --iso-8601=seconds'
+alias ss='ss -patun'
+
+########################################################
+#|# Tips                                               #
+########################################################
+alias tips='cat $DOTFILES/tips'
+alias tips-ol='cat $DOTFILES/cool_oneliners'
+alias tips-bash='grep -B1 -A5 "#|## Bash" $DOTFILES/tips'
+alias tips-alias='grep -B1 -A5 "#|## Alias" $DOTFILES/tips'
+
+########################################################
+#|# Dotfiles related                                   #
+########################################################
+alias edit-ol='vim $DOTFILES/cool_oneliners'
+alias edit-todo='vim $DOTFILES/TODO'
+alias edit-aliases='vim ~/.bash_aliases'
+alias edit-exports='vim ~/.bash_exports'
+alias edit-functions='vim ~/.bash_functions'
+alias edit-bashrc='vim ~/.bashrc'
+
+alias grep-aliases='cat $DOTFILES/bash_aliases | grep '
+alias grep-exports='cat $DOTFILES/bash_exports | grep '
+alias grep-functions='cat $DOTFILES/bash_functions | grep '
+alias grep-dotfiles='cat $DOTFILES/bash_* | grep'
 
 # Open any file with the default command for that file
 # alias open='xdg-open'
 
 # Make the bash feel smoother
 # correct common typos
+alias nmeo='nemo'
+alias neom='nemo'
 alias l='ls'
 alias sl='ls'
 alias ks='ls'

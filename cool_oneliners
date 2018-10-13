@@ -35,3 +35,13 @@ while sleep 1;do tput sc;tput cup 0 $(($(tput cols)-29));date;tput rc;done &
 #Heredoc and HereStrings
 cat << EOF > /tmp/somefile
 cat << 'EOF' > /tmp/somefile #doesn't interpret variables
+
+#loop file as variables
+while IFS='' read -r var || [[ -n "$var" ]]; do
+done < "$INPUT_FILE"
+
+#read about linux ...
+man hier; man file-hierarchy
+
+#redirect ports - port 8080 of localhost gonna be 1234 in 192.168.1.2
+ssh -L 8080:localhost:1234 root@192.168.1.2
