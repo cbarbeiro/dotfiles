@@ -7,8 +7,12 @@
 ########################################################
 # Disable aliases by prefixing with '\':
 # $\grep
+#
 # Do not save in history by prefixing with ' '(space):
 # $ grep
+#
+# Open any file with the default command for that file
+# alias open='xdg-open'
 
 ########################################################
 #|## Bash                                              #

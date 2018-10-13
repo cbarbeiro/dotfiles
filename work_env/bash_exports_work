@@ -1,11 +1,19 @@
-export ANDROID_HOME=/home/ivo/Android/Sdk
-export ANDROID_BIN="$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools/bin"
-export BM_DIR_WORK=~/.dir_bookmarks_work
+########################################################
+#|# WMC                                                #
+########################################################
 export WIT_HOME=~/WIT
 export WIT_REPORTS=~/WIT/wit_reports
 export WMC_ROOT=$WIT_HOME/witlab-wmc
-export WMC_DEVEL=$WIT_ROOT/android
-export WMC_DEVEL44=$WIT_ROOT/android-4.4/android
+export WMC_DEVEL51=$WMC_ROOT/android
+export WMC_DEVEL50=$WMC_ROOT/android-2/android
 export WMC_SCRIPTS=$WMC_ROOT/scripts/
 
+########################################################
+#|# Misc                                               #
+########################################################
+# @Override
+export ANDROID_HOME=$HOME/Android/Sdk
+# @Override
+export ANDROID_BIN="$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools/bin"
 export PATH="$PATH:$WIT_HOME:$WMC_SCRIPTS:$ANDROID_BIN"
+export BM_DIR_WORK=~/.dir_bookmarks_work
