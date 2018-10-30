@@ -73,9 +73,9 @@ alias gg='git gui'
 alias gk='gitk'
 alias gst='git status'
 alias gdiff='git diff'
-alias gpwd="git status | head -n1 | sed 's,On branch ,,'"                           # git pwd
+alias gpwd="git status | head -n1 | sed 's,On branch ,,'"		# git pwd
+alias gpwdlb="echo $LAST_GIT_BRANCH"					# git pwd last branch
 alias gcd='LAST_GIT_BRANCH=$(gpwd); git checkout'
-alias gmkdir='git checkout --track '
 alias grmlocal='git branch -d'
 alias grmremote='git branch -dr'
 alias gclb='__LGB=$LAST_GIT_BRANCH; gcd $__LGB'   # git cd last branch
@@ -96,6 +96,7 @@ alias ghist='git log -p --follow -- '
 ########################################################
 #|# CLIPBOARD                                          #
 ########################################################
+alias tocb='tr -d "\n" | clipit && echo -e "clipboard:\t$(clipit -c)"'
 alias cb-tosh='clipit -p > ~/Desktop/job_2.sh'
 alias cb-tolog='clipit -p > ~/Desktop/android.log'
 alias cb-tojava='clipit -p > ~/Desktop/class.java'
@@ -145,14 +146,16 @@ alias grepr='\grep --color=always -RnsI' # don't forget to add * after the #hays
 alias youtube-dl='youtube-dl -vcti -R5 --write-description --write-info-json --all-subs --write-thumbnail --add-metadata'
 alias date-iso='date --iso-8601=seconds'
 alias ss='ss -patun'
+alias fix-bose='pacmd set-card-profile bluez_card.04_52_C7_FF_F8_1F a2dp_sink'
 
 ########################################################
 #|# Tips                                               #
 ########################################################
 alias tips='cat $DOTFILES/tips'
 alias tips-ol='cat $DOTFILES/cool_oneliners'
-alias tips-bash='grep -B1 -A5 "#|## Bash" $DOTFILES/tips'
-alias tips-alias='grep -B1 -A10 "#|## Alias" $DOTFILES/tips'
+alias tips-bash='\grep -B1 -A5 "#|## Bash" $DOTFILES/tips'
+alias tips-alias='\grep -B1 -A10 "#|## Alias" $DOTFILES/tips'
+alias tips-adb='\grep -B1 -A8 "#|## ADB" $DOTFILES/tips'
 
 ########################################################
 #|# Dotfiles related                                   #

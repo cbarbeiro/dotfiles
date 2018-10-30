@@ -1,19 +1,19 @@
 #!/bin/bash
 
-#SCRIPT
+# SCRIPT
 SCRIPT_DIR=$(dirname $0)
 SCRIPT_NAME=$(basename $0 .sh)
 CONFIG="$(dirname $0)/.config"
 MAIN_OPTS="aV:v:rdweshmbp"
 ADD_OPTS="t:f:ixl"
 
-#EXTERNAL BUSINESS TAGS
+# EXTERNAL BUSINESS TAGS
 COST_CENTERS="$SCRIPT_DIR/.cost_centers"
 CUSTOMERS="$SCRIPT_DIR/.customers"
 PROJECTS="$SCRIPT_DIR/.projects"
 TAGS="$SCRIPT_DIR/.tags"
 
-#CONSTANTS
+# CONSTANTS
 DEBUG=false
 EPOCH="19700101"
 NOW="now"
@@ -21,12 +21,22 @@ TIMESTAMP=$(date +%s)
 INTERACTIVE_TAGS="INTERACTIVE_TAGS"
 HEADER_REGEX="^\w*\s[\/\(\)[:digit:]]+$"
 ENTRY_REGEX="^[[:digit:]\:\t]+[\w[:blank:]]+"
+RQ_SUCCESS="Submission success"
+RQ_ERR_AUTH="Authentication error"
 EDITOR=${EDITOR:-vim}
 
-#From this script will come custom configurations used to complete the report
+# COLORS
+C_RESET=$(tput sgr0)
+C_RED=$(tput setaf 1)
+C_GREEN=$(tput setaf 2)
+C_YELLOW=$(tput setaf 3)
+
+# ERRORS
+
+# From this script will come custom configurations used to complete the report
 source $CONFIG
 
-#FILE OPTIONS
+# FILE OPTIONS
 REPORT_FILE=$REPORT_DIR/$REPORT_FILENAME
 START=$REPORT_DIR/.start
 
@@ -37,27 +47,31 @@ START=$REPORT_DIR/.start
 function show_usage(){
     printf "Application to report time entries of working tasks.\nTask details are written when the task is finished.
 
-Usage: $(basename $0) [-h] [-a [-f time] [-t \"tag name\"] [-i] [-l] [-x]]
+Usage: $(basename $0) [-h] [-a [-f time] [-t \"tag name\"] [-i]]
                         [-s] [-e] [-w] [-v day] [-V monday] [-p] [-m] [-b] [-r]
 
-Options:
+Local options:
 
 -a	add a time entry now (a report entry is made of two time entries)
--f	with -a, force a time entry. Format = %%H:%%M
--t	with -a, add a task name instead of the default one
--i	with -a, interactively choose every business tag
--l	with -a, logoff computer after reporting
--x	with -a, turn off the screen after reporting
+    -f	with -a, force a time entry. Format = %%H:%%M
+    -t	with -a, add a task name instead of the default one
+    -i	with -a, interactively choose every business tag
 -v	add a vacation entry for the given day. Format = %%Y-%%m-%%d
 -V	add a vacation entry for a week. any given Monday. Format = %%Y-%%m-%%d
 -s	show report
 -e	edit report file manually
 -w	calculate total working time in the report
+-r	remove temp and report files
+
+Server options:
+
 -p	post report to server
 -m	get missing reports from server
 -b	get business tags from server
--r	remove temp and report files
--h	this help menu\\n"
+\\n"
+
+#-l	with -a, logoff computer after reporting
+#-x	with -a, turn off the screen after reporting
 }
 
 function checkOrCreateDir() {
@@ -190,8 +204,8 @@ function assert_valid_monday(){
 	fi
 }
 
-#Input: "01:10"
-#Output: 4200
+# Input: "01:10"
+# Output: 4200
 function get_seconds(){
 	#replace ':' for a space and remove leading zeros
 	read -r h m <<< $(echo "$1" | tr ':' ' ' | sed -E 's,0([0-9])+,\1,g')
@@ -245,7 +259,7 @@ function calculate_total_time() {
 			total_diff=$((total_diff + entry_diff ))
 		fi
 
-	done < "$REPORT_FILE"
+	done < "$1"
 
 	#print last day parsed
 	[[ $day_diff -gt 0 ]] && echo -e "\nDay Total: $((day_diff/60/60))h $((day_diff/60%60))m"
@@ -386,20 +400,18 @@ function submitReport {
     soap_report="/tmp/soap_report_$TIMESTAMP.xml"
     option="N"
 
-    echo "Now freely edit your report and save&quit when done."
+    echo -e "Freely edit your report and save & quit when done.\nYou'll be asked to confirm the submission."
     read -n 1
 
     while [[ "$option" == "${option#[Yy]}" ]]; do
-
         cp $REPORT_FILE $temp_report
         vim $temp_report
-        cat $temp_report
+        calculate_total_time $temp_report
         echo -e "\nThis is what you're sending. "
-	read -n 1 -p "Are you sure? [y/N] " option
-
+	    read -n 1 -p "Are you sure? [y/N] " option
     done
 
-    echo -e "\n\nSending---"
+    echo -e "\n\nSending ..."
 
 	echo "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"$WS_REPORTS/\">
 	   <soapenv:Header/>
@@ -416,17 +428,20 @@ function submitReport {
 	   </soapenv:Body>
 	</soapenv:Envelope>" > $soap_report
 
-	RESULT=$(httpPostFile $TT_WS_SR $soap_report text/xml |  sed -e 's,.*<info>\([^<]*\)</info>.*,\1,g' 2>/dev/null)
-
-	if [[ $DEBUG ]]; then
+    if $DEBUG ; then
 		cat $soap_report
 	fi
-    
-	echo -e "\nSubmission result: \e[00;31m$RESULT \e[00m"
 
-	if [ "$RESULT" == "Authentication error!" ]; then
+	RESULT=$(httpPostFile $TT_WS_SR $soap_report text/xml |  sed -e 's,.*<info>\([^<]*\)</info>.*,\1,g' 2>/dev/null)
+	
+    if [[ "$RESULT" =~ ^"$RQ_ERR_AUTH" ]]; then
 		echo "Please configure your password in the configuration file."
-	fi
+		exit 1
+	elif [[ "$RESULT" =~ ^"$RQ_SUCCESS" ]]; then
+        echo -e "\nSubmission result: ${C_GREEN} $RESULT ${C_RESET}\n"
+    else
+        echo -e "\nSubmission result: ${C_RED} $RESULT ${C_RESET}\n"
+    fi
 
     if [[ $SAVE_SENT_REPORTS == true ]]; then
         checkOrCreateDir $SENT_REPORTS_DIR
@@ -434,8 +449,8 @@ function submitReport {
         echo -e "\nReport saved to: $SENT_REPORTS_DIR"
     fi
 
-	rm -f $soap_report > /dev/null
-	rm -f $temp_report > /dev/null
+	rm -f ${soap_report} > /dev/null
+	rm -f ${temp_report} > /dev/null
 }
 
 function showCC {
@@ -467,16 +482,16 @@ function showCC {
 # MAIN
 ############
 
-#ASSERTIONS
+# ASSERTIONS
 
-##COMPATIBILITY
+## COMPATIBILITY
 parse_date="parse_date_gnu"
 if [[ "$OSTYPE" == "darwin"* ]]; then
        IS_MAC=true
        parse_date="parse_date_bsd"
 fi
 
-##USERDATA
+## USERDATA
 LOGIN=$(decode_base64 $USERNAME)
 PASS=$(decode_base64 $PASSWORD)
 
@@ -485,13 +500,13 @@ if [[ "x"$LOGIN == "xCHANGE_ME" ]]; then
     exit
 fi
 
-#If no arguments are given, show_usage
+# If no arguments are given, show_usage
 if [[ -z $1 ]]; then
     show_usage
     exit
 fi
 
-#OPTIONS
+# OPTIONS
 while getopts "$MAIN_OPTS" opt; do
     case $opt in
         a)
@@ -563,10 +578,14 @@ while getopts "$MAIN_OPTS" opt; do
         d)
             #should be the first argument
             DEBUG=true
+            ;;
+        D)
+            #should be the first argument
+            DEBUG=true
             set -x
             ;;
         w)
-            calculate_total_time
+            calculate_total_time $REPORT_FILE
             ;;
         e)
             $EDITOR $REPORT_FILE

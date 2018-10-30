@@ -1,11 +1,12 @@
 #Personal
+$HOME/dotfiles
 $HOME/Documents
-$HOME/Videos
 $HOME/Downloads
+$HOME/Desktop
 $HOME/Music
 $HOME/Pictures
+$HOME/Videos
 $HOME/work/udacity/yourFirstAppReviews
-$HOME/dotfiles
 
 #System
 /var/pacman/cache/pkg

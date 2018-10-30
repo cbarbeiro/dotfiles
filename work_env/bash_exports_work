@@ -7,6 +7,7 @@ export WMC_ROOT=$WIT_HOME/witlab-wmc
 export WMC_DEVEL51=$WMC_ROOT/android
 export WMC_DEVEL50=$WMC_ROOT/android-2/android
 export WMC_SCRIPTS=$WMC_ROOT/scripts/
+export WMC_TEMP=$WMC_ROOT/temp/
 
 ########################################################
 #|# Misc                                               #
@@ -15,5 +16,5 @@ export WMC_SCRIPTS=$WMC_ROOT/scripts/
 export ANDROID_HOME=$HOME/Android/Sdk
 # @Override
 export ANDROID_BIN="$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools/bin"
-export PATH="$PATH:$WIT_HOME:$WMC_SCRIPTS:$ANDROID_BIN"
+export PATH="$PATH:$WIT_HOME:$ANDROID_BIN"
 export BM_DIR_WORK=~/.dir_bookmarks_work

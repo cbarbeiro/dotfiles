@@ -21,3 +21,36 @@
 # Ctrl + Alt + E - expand alias
 # Alt + Shift + * - expand arguments ( file* )
 # Ctrl + R - reverse history search
+
+########################################################
+#|## ADB                                               #
+########################################################
+# Check device desity
+# adb shell dumpsys display | grep mBaseDisplayInfo
+#
+# Change device density
+# adb shell wm density 480
+#
+# Show layout bounds
+# adb shell setprop debug.layout true
+#
+# Show GFX
+# adb shell setprop debug.hwui.profile [ visual_bars || visual_lines || false ]
+#
+# Show Overdraw
+# adb shell setprop [ debug.hwui.overdraw || debug.hwui.show_overdraw ] [ true || show || false ]
+#
+# Print System Properties
+# adb shell cat /system/build.prop
+#
+# Screenshot
+# adb exec-out screencap -p > screen.png
+# adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > ~/EZY_ADB/ScreenShots/$(date '+%Y%m%d%H%M%S').png
+#
+# ScreenRecord
+# adb shell screenrecord screenrecord.mp4
+#
+# Call System Poker
+# adb shell service call activity 1599295570 //System poker
+#
+#

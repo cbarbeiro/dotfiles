@@ -25,35 +25,41 @@ alias edit-tt-conf='vim $DOTFILES/time_tracker/.config'
 ########################################################
 #|# Redmine                                            #
 ########################################################
-alias wmc_issues='python $WMC_SCRIPTS/redmine_wit.py i'
-alias wmc_branchname='python $WMC_SCRIPTS/redmine_wit.py b'
-alias wmc_commitmsg='python $WMC_SCRIPTS/redmine_wit.py c'
+alias wmc_redmine='python $WMC_SCRIPTS/redmine_wit.py' 
+alias wmc_gitlab='python $WMC_SCRIPTS/gitlab_wit.py'
 
 ########################################################
 #|# WMC Aliases                                        #
 ########################################################
-alias wmc_sp='bash $WMC_SCRIPTS/setup_project_wit_qa.sh'
+alias wmc_sp='wmc_sp_qa'
+alias wmc_sp_qa='bash $WMC_SCRIPTS/setup_project_wit_qa.sh'
+alias wmc_sp_demo='bash $WMC_SCRIPTS/setup_project_wit_demo.sh'
 alias wmc_sp_base='./setup_project.sh'
-alias wmc_buildNinstall='./gradlew installRcsplusWebCompanionOnSoundcodeOnDebug'
-alias wmc_lintDebug='./gradlew lintRcsplusWebCompanionOnSoundcodeOnDebug -b build.gradle'
-alias wmc_lintRelease='./gradlew lintRcsplusWebCompanionOnSoundcodeOnRelease -b build.gradle'
-alias wmc_lintCiRelease='./gradlew lintRcsplusWebCompanionOnSoundcodeOnCiRelease -b build.gradle'
+alias wmc_utils='bash $WMC_SCRIPTS/wmc_utils.sh'
+alias wmc_buildNinstall='./gradlew installRcsplusWebCompanionOnSoundcodeOnDebug -Dlint.html.prefs=theme=darcula'
+alias wmc_lintDebug='./gradlew lintRcsplusWebCompanionOnSoundcodeOnDebug -b build.gradle -Dlint.html.prefs=theme=darcula'
+alias wmc_lintRelease='./gradlew lintRcsplusWebCompanionOnSoundcodeOnRelease -b build.gradle -Dlint.html.prefs=theme=darcula'
+alias wmc_lintCiRelease='./gradlew lintRcsplusWebCompanionOnSoundcodeOnCiRelease -b build.gradle -Dlint.html.prefs=theme=darcula'
 alias wmc_cleanproject='find . -name "build*" -type d -exec rm -rf {} \;'
 alias wmc_optimizepng='find . -name "*.png" -exec zopflipng -y {} {} \;'
-alias wmc_logs='./$WMC_SCRIPTS/ls-rcs-logs.sh'
+alias wmc_logs='bash $WMC_SCRIPTS/ls-rcs-logs.sh'
 
 ########################################################
 #|# Git                                                #
 ########################################################
 alias gremovelog='rm -f $WMC_DEVEL/.git/gc.log && rm -f $WMC_DEVEL44/.git/gc.log'
-alias gcd44='LAST_GIT_BRANCH=$(gpwd); gcd 4.4/devel'    # git cd 4.4/devel
 alias gcd50='LAST_GIT_BRANCH=$(gpwd); gcd 5.0/devel'    # git cd 5.0/devel
 alias gcd51='LAST_GIT_BRANCH=$(gpwd); gcd 5.1/devel'    # git cd 5.1/devel
+alias gmkdir50='gcd50 && git checkout -b'
+alias gmkdir51='gcd51 && git checkout -b'
 alias gmissingmr50='git log origin/4.4/devel ^origin/5.0/devel --no-merges'
 alias gmissingmr51='git log origin/5.0/devel ^origin/5.1/devel --no-merges'
 alias gmerge50='git merge origin/5.0/devel'
 alias gmerge51='git merge origin/5.1/devel'
-alias guall='gfa && gcd50 && gmerge50 && gcd51 && gmerge51 && echo -e "\n\n\t$C_BLUE" && gmissingmr50 && echo -e "\n\n\t" && gmissingmr51; echo -e "$C_RESET\n"'
+alias gmergelb='git merge $LAST_GIT_BRANCH'
+alias gu50='gf && gcd50 && gmerge50 && gmissingmr50'
+alias gu51='gf && gcd51 && gmerge51 && gmissingmr51'
+alias guall='gfa && gu50 && gu51'
 
 ########################################################
 #|# Misc                                               #
