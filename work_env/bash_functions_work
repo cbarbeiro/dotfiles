@@ -52,6 +52,7 @@ function get_log_entries(){
 	mv suspend_logs{,_old}; journalctl --no-pager | egrep 'systemd-sleep' > suspend_logs
 	mv syslogs_reboots{,_old}; journalctl --no-pager | \grep -B5 -A1 $'\-\-\ Reboot\ \-\-' > syslogs_reboots
 	#LOGINLIST=$(last --time-format=iso --since 2018-04-01 ivo | head -n-2 | grep tty7 | egrep -v $'\(00:0[0-9]\)' | awk '{print $4,$6,$7,$8,$9,$10}')
+	echo "Logs in $WIT_REPORTS updated\n"
 	cd -;
 }
 

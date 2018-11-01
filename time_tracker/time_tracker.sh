@@ -221,7 +221,7 @@ function calculate_total_time() {
 		$DEBUG && echo -e "Line read from file: $line"
 
 		if [[ -z $line ]]; then
-			$DEBUG && echo "continuing..."
+			$DEBUG && echo "empty line"
 			continue
 		fi
 
@@ -230,13 +230,13 @@ function calculate_total_time() {
 
 			if [[ $day_diff -gt 0 ]]; then
 				#print total time of last day parsed
-				echo -e "\nDay Total: $((day_diff/60/60))h $((day_diff/60%60))m\n"
+				echo -e "\n Day Total: $((day_diff/60/60))h $((day_diff/60%60))m"
 
 				#reset timer
 				day_diff=0
 			fi
 
-			echo -e "\n\t\t$line"
+			echo -e "\n\t   $line"
 
 		elif [[ "$line" =~ $ENTRY_REGEX ]]; then
 			$DEBUG && echo "IS_ENTRY"
@@ -250,7 +250,7 @@ function calculate_total_time() {
 			entry_diff=$((entry_stop - entry_start))
 
 			#show counter for each entry
-			echo -e "$((entry_diff / 60 / 60))h $(( (entry_diff / 60) % 60))m\t<\t$line"
+			echo -e " $((entry_diff / 60 / 60))h $(( (entry_diff / 60) % 60))m\t| $line"
 
 			#update day counter
 			day_diff=$((day_diff + entry_diff ))
@@ -262,7 +262,7 @@ function calculate_total_time() {
 	done < "$1"
 
 	#print last day parsed
-	[[ $day_diff -gt 0 ]] && echo -e "\nDay Total: $((day_diff/60/60))h $((day_diff/60%60))m"
+	[[ $day_diff -gt 0 ]] && echo -e "\n Day Total: $((day_diff/60/60))h $((day_diff/60%60))m"
 
 	#print whole report time
 	[[ $total_diff -gt 0 ]] && echo -e "\nReport Total Time: $((total_diff/60/60))H $((total_diff/60%60))m\n"
