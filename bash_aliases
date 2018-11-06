@@ -82,7 +82,6 @@ alias gclb='__LGB=$LAST_GIT_BRANCH; gcd $__LGB'   # git cd last branch
 alias glslocal='git branch'
 alias glsremote='git branch --remote'
 alias gf='git fetch'
-alias gfa='git fetch --all'
 alias gu='git pull'
 alias gpb='git push -u origin'                          # git push branch insert-branch-name
 alias gpcb='git push -u origin $(gpwd)'                 # git push current branch
