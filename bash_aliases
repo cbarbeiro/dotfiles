@@ -132,16 +132,15 @@ alias cast-converter='chromecastize.sh --mkv'
 ########################################################
 #|# Miscellaneous                                      #
 ########################################################
+alias grep='grep --color=always -n'
+alias grepr='\grep --color=always -RnsI' # don't forget to add * after the #haystack
+alias lessf='less +F'
+alias lessr='less -R'
 alias calc='galculator'
-alias getmyip='curl http://ipecho.net/plain; echo -e \"\n\"'
 alias echo='echo -e'
 alias ncdu='ncdu --color dark'
 alias term='gnome-terminal'
 alias src='src-hilite-lesspipe.sh'
-alias lessf='less +F'
-alias lessr='less -R'
-alias grep='grep --color=always -n'
-alias grepr='\grep --color=always -RnsI' # don't forget to add * after the #haystack
 alias youtube-dl='youtube-dl -vcti -R5 --write-description --write-info-json --all-subs --write-thumbnail --add-metadata'
 alias date-iso='date --iso-8601=seconds'
 alias ss='ss -patun'
@@ -170,6 +169,8 @@ alias grep-aliases='cat $DOTFILES/bash_aliases | grep '
 alias grep-exports='cat $DOTFILES/bash_exports | grep '
 alias grep-functions='cat $DOTFILES/bash_functions | grep -C5 '
 alias grep-dotfiles='cat $DOTFILES/bash_* | grep'
+
+alias lsol='cat $DOTFILES/cool_oneliners'
 
 ########################################################
 #|# Typos                                              #
