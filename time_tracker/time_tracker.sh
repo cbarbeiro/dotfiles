@@ -4,7 +4,7 @@
 SCRIPT_DIR=$(dirname $0)
 SCRIPT_NAME=$(basename $0 .sh)
 CONFIG="$(dirname $0)/.config"
-MAIN_OPTS="aV:v:rdweshmbp"
+MAIN_OPTS="aV:v:d:rweshmbp"
 ADD_OPTS="t:f:ixl"
 
 # EXTERNAL BUSINESS TAGS
@@ -22,6 +22,7 @@ INTERACTIVE_TAGS="INTERACTIVE_TAGS"
 HEADER_REGEX="^\w*\s[\/\(\)[:digit:]]+$"
 NEW_WEEK_REGEX="^Monday.*$"
 ENTRY_REGEX="^[[:digit:]\:\t]+[\w[:blank:]]+"
+IS_NUMBER_REGEX="^[0-9]*$"
 RQ_SUCCESS="Submission success"
 RQ_ERR_AUTH="Authentication error"
 EDITOR=${EDITOR:-vim}
@@ -58,18 +59,19 @@ Local options:
     -f	with -a, force a time entry. Format = %%H:%%M
     -t	with -a, add a task name instead of the default one
     -i	with -a, interactively choose every business tag
+-d  delete last X lines of report (default=1)
+-e	edit report file manually
+-r	remove temp and report files
+-s	show report
 -v	add a vacation entry for the given day. Format = %%Y-%%m-%%d
 -V	add a vacation entry for a week. any given Monday. Format = %%Y-%%m-%%d
--s	show report
--e	edit report file manually
 -w	calculate total working time in the report
--r	remove temp and report files
 
 Server options:
 
--p	post report to server
--m	get missing reports from server
 -b	get business tags from server
+-m	get missing reports from server
+-p	post report to server
 \\n"
 
 #-l	with -a, logoff computer after reporting
@@ -314,6 +316,21 @@ function register_holiday() {
 	echo -e "\nHoliday Task \"$TASK_H\" added for day $1\n\n$(tail -2 $REPORT_FILE)"
 }
 
+function remove_entries(){
+    max_lines=$(wc -l $REPORT_FILE | awk "{print \$1}")
+
+    if [[ ! "$1" =~ $IS_NUMBER_REGEX ]]; then
+        echo "$1 is not a number...";
+        exit 1
+    elif [[ "$1" -lt 1 ]] || [[ "$1" -gt $max_lines ]]; then
+        echo "Trying to remove an impossible number of lines. (Min= 1, Max= $max_lines)"
+        exit 1
+    fi
+
+    echo "$(cat "$REPORT_FILE" | head -n-$1)" > $REPORT_FILE
+    echo "$1 line(s) removed"
+}
+
 function register_time_entry() {
     #Set default time entry as 'now'
     time_entry=$($parse_date "%H:%M")
@@ -331,7 +348,7 @@ function register_time_entry() {
             COST_CENTER=$(cat $COST_CENTERS | sed 's/^#.*//g' | sed '/^\s*$/d' | fzf --tac --cycle)
             CUSTOMER_NAME=$(cat $CUSTOMERS | sed 's/^#.*//g' | sed '/^\s*$/d' | fzf --tac --cycle)
             PROJECT_NAME=$(cat $PROJECTS | sed 's/^#.*//g' | sed '/^\s*$/d' | fzf --tac --cycle)
-            TASK=$(cat $TAGS | sed 's/^#.*//g' | sed '/^\s*$/d' | fzf --tac --cycle --print-query | tr -d '\n')
+            TASK=$(cat $TAGS | sed 's/^#.*//g' | sed '/^\s*$/d' | fzf --tac --cycle --print-query | tail -n1)
 
         elif [[ ! -z "$2" ]]; then
             TASK="$2"
@@ -608,13 +625,7 @@ while getopts "$MAIN_OPTS" opt; do
             submitReport
             ;;
         d)
-            #should be the first argument
-            DEBUG=true
-            ;;
-        D)
-            #should be the first argument
-            DEBUG=true
-            set -x
+            remove_entries $OPTARG
             ;;
         w)
             calculate_total_time $REPORT_FILE
