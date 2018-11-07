@@ -20,6 +20,7 @@ NOW="now"
 TIMESTAMP=$(date +%s)
 INTERACTIVE_TAGS="INTERACTIVE_TAGS"
 HEADER_REGEX="^\w*\s[\/\(\)[:digit:]]+$"
+NEW_WEEK_REGEX="^Monday.*$"
 ENTRY_REGEX="^[[:digit:]\:\t]+[\w[:blank:]]+"
 RQ_SUCCESS="Submission success"
 RQ_ERR_AUTH="Authentication error"
@@ -30,6 +31,7 @@ C_RESET=$(tput sgr0)
 C_RED=$(tput setaf 1)
 C_GREEN=$(tput setaf 2)
 C_YELLOW=$(tput setaf 3)
+C_BLUE=$(tput setaf 4)
 
 # ERRORS
 
@@ -92,7 +94,7 @@ function decode_base64(){
     echo "$(base64 $decode_arg <<< "$1")"
 }
 
-# POSIX parse date function
+# *BSD parse date function
 # input: parse_date "input_date" "output_format" "increment"
 # output: the result of the following date command
 #
@@ -215,6 +217,7 @@ function get_seconds(){
 function calculate_total_time() {
 	total_diff=0
 	day_diff=0
+	week_diff=0
 
 	while IFS='' read -r line || [[ -n "$line" ]]; do
 
@@ -230,10 +233,24 @@ function calculate_total_time() {
 
 			if [[ $day_diff -gt 0 ]]; then
 				#print total time of last day parsed
-				echo -e "\n Day Total: $((day_diff/60/60))h $((day_diff/60%60))m"
+				echo -e "\n ${C_YELLOW}Day Total: $((day_diff/60/60))h $((day_diff/60%60))m ${C_RESET}"
 
 				#reset timer
 				day_diff=0
+			fi
+
+			if [[ "$line" =~ $NEW_WEEK_REGEX ]] && [[ $week_diff -gt 0 ]]; then
+		        $DEBUG && echo "IS_NEW_WEEK"
+
+				#print total time of last week parsed
+				if [[ $((week_diff/60/60)) -lt 40 ]]; then
+				    echo -e "\n ${C_RED}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}"
+				else
+				    echo -e "\n ${C_GREEN}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}"
+                fi
+
+				#reset timer
+				week_diff=0
 			fi
 
 			echo -e "\n\t   $line"
@@ -255,6 +272,9 @@ function calculate_total_time() {
 			#update day counter
 			day_diff=$((day_diff + entry_diff ))
 
+            #update week counter
+			week_diff=$((week_diff + entry_diff ))
+
 			#update total counter
 			total_diff=$((total_diff + entry_diff ))
 		fi
@@ -264,8 +284,15 @@ function calculate_total_time() {
 	#print last day parsed
 	[[ $day_diff -gt 0 ]] && echo -e "\n Day Total: $((day_diff/60/60))h $((day_diff/60%60))m"
 
+	#print last week parsed
+	if [[ $((week_diff/60/60)) -lt 40 ]]; then
+        echo -e "\n ${C_RED}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}"
+    else
+        echo -e "\n ${C_GREEN}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}"
+    fi
+
 	#print whole report time
-	[[ $total_diff -gt 0 ]] && echo -e "\nReport Total Time: $((total_diff/60/60))H $((total_diff/60%60))m\n"
+	[[ $total_diff -gt 0 ]] && echo -e "\n${C_BLUE}Report Total Time: $((total_diff/60/60))H $((total_diff/60%60))m${C_RESET}\n"
 }
 
 function register_holiweek() {
@@ -388,12 +415,17 @@ function showMissingReports {
 	rm -f "$request"
 
 	echo -e "Requesting missing reports...\n"
-	echo "$RESULT"
+
+	if [[ $(echo "$RESULT" | wc -l) -gt 1 ]];then
+	    echo "${C_YELLOW}$RESULT${C_RESET}"
+	else
+	    echo "${C_GREEN}$RESULT${C_RESET}"
+	fi
 }
 
 #
 # TODO:
-# test submit report - gnu & bsd
+# test submit report - bsd
 #
 function submitReport {
     temp_report="/tmp/weekly_report_$TIMESTAMP.txt"

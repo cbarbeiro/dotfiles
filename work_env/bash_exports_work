@@ -6,6 +6,7 @@ export WIT_REPORTS=~/WIT/wit_reports
 export WMC_ROOT=$WIT_HOME/witlab-wmc
 export WMC_DEVEL51=$WMC_ROOT/android
 export WMC_DEVEL50=$WMC_ROOT/android-2/android
+export WMC_LOGS=$WMC_ROOT/logs
 export WMC_SCRIPTS=$WMC_ROOT/scripts/
 export WMC_TEMP=$WMC_ROOT/temp/
 

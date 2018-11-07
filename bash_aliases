@@ -149,11 +149,11 @@ alias fix-bose='pacmd set-card-profile bluez_card.04_52_C7_FF_F8_1F a2dp_sink'
 ########################################################
 #|# Tips                                               #
 ########################################################
-alias tips='cat $DOTFILES/tips'
+alias tips-all='cat $DOTFILES/tips'
 alias tips-ol='cat $DOTFILES/cool_oneliners'
-alias tips-bash='\grep -B1 -A5 "#|## Bash" $DOTFILES/tips'
-alias tips-alias='\grep -B1 -A10 "#|## Alias" $DOTFILES/tips'
-alias tips-adb='\grep -B1 -A8 "#|## ADB" $DOTFILES/tips'
+alias tips-bash=' sed -n "/\# Bash/,/^\s*$/p" $DOTFILES/tips'
+alias tips-alias=' sed -n "/\# Alias/,/^\s*$/p" $DOTFILES/tips'
+alias tips-adb=' sed -n "/\# ADB/,/^\s*$/p" $DOTFILES/tips'
 
 ########################################################
 #|# Dotfiles related                                   #
@@ -169,8 +169,6 @@ alias grep-aliases='cat $DOTFILES/bash_aliases | grep '
 alias grep-exports='cat $DOTFILES/bash_exports | grep '
 alias grep-functions='cat $DOTFILES/bash_functions | grep -C5 '
 alias grep-dotfiles='cat $DOTFILES/bash_* | grep'
-
-alias lsol='cat $DOTFILES/cool_oneliners'
 
 ########################################################
 #|# Typos                                              #

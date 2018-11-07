@@ -78,8 +78,7 @@ if [[ "x$(hostname)" = "xarchThrone" ]]; then
 	do
 		source ~/.${script}
 	done
-	
-	#overrides
+
 fi
 
 ########################################################

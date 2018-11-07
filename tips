@@ -21,6 +21,16 @@
 # Ctrl + Alt + E - expand alias
 # Alt + Shift + * - expand arguments ( file* )
 # Ctrl + R - reverse history search
+#
+# Redirection
+# > - descriptor
+# >> - file
+# >>> - string
+#
+# cmd 1> file - stdout
+# cmd 2> file - stderr
+# cmd 3>&1 1>&2 2>&3 - swap stdout with stderr
+# cat << EOF > file - here-by doc. surround with \' to disable variable interpretation
 
 ########################################################
 #|## ADB                                               #
@@ -52,5 +62,3 @@
 #
 # Call System Poker
 # adb shell service call activity 1599295570 //System poker
-#
-#
