@@ -59,7 +59,7 @@ Local options:
     -f	with -a, force a time entry. Format = %%H:%%M
     -t	with -a, add a task name instead of the default one
     -i	with -a, interactively choose every business tag
--d  delete last X lines of report (default=1)
+-d      delete last X lines of report (default=1)
 -e	edit report file manually
 -r	remove temp and report files
 -s	show report
@@ -284,7 +284,7 @@ function calculate_total_time() {
 	done < "$1"
 
 	#print last day parsed
-	[[ $day_diff -gt 0 ]] && echo -e "\n Day Total: $((day_diff/60/60))h $((day_diff/60%60))m"
+	[[ $day_diff -gt 0 ]] && echo -e "\n ${C_YELLOW}Day Total: $((day_diff/60/60))h $((day_diff/60%60))m ${C_RESET}"
 
 	#print last week parsed
 	if [[ $((week_diff/60/60)) -lt 40 ]]; then
