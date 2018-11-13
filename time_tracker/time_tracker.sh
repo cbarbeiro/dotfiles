@@ -203,7 +203,7 @@ function assert_valid_monday(){
     weekday=$($parse_date "%u" "$1")
 
     if [[ $weekday != "1" ]]; then
-		echo -e "$1 is NOT a Monday => $($parse_date "" $1)\nIn order to add a full holiweek insert the corresponding Monday.\n"
+		printf "$1 is NOT a Monday => $($parse_date "" $1)\nIn order to add a full holiweek insert the corresponding Monday.\n"
 		exit
 	fi
 }
@@ -223,7 +223,7 @@ function calculate_total_time() {
 
 	while IFS='' read -r line || [[ -n "$line" ]]; do
 
-		$DEBUG && echo -e "Line read from file: $line"
+		$DEBUG && printf "Line read from file: $line"
 
 		if [[ -z $line ]]; then
 			$DEBUG && echo "empty line"
@@ -235,7 +235,7 @@ function calculate_total_time() {
 
 			if [[ $day_diff -gt 0 ]]; then
 				#print total time of last day parsed
-				echo -e "\n ${C_YELLOW}Day Total: $((day_diff/60/60))h $((day_diff/60%60))m ${C_RESET}"
+				printf "\n ${C_YELLOW}Day Total: $((day_diff/60/60))h $((day_diff/60%60))m ${C_RESET}"
 
 				#reset timer
 				day_diff=0
@@ -246,16 +246,16 @@ function calculate_total_time() {
 
 				#print total time of last week parsed
 				if [[ $((week_diff/60/60)) -lt 40 ]]; then
-				    echo -e "\n ${C_RED}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}"
+				    printf "\n ${C_RED}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}"
 				else
-				    echo -e "\n ${C_GREEN}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}"
+				    printf "\n ${C_GREEN}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}"
                 fi
 
 				#reset timer
 				week_diff=0
 			fi
 
-			echo -e "\n\t   $line"
+			printf "\n\t   $line"
 
 		elif [[ "$line" =~ $ENTRY_REGEX ]]; then
 			$DEBUG && echo "IS_ENTRY"
@@ -269,7 +269,7 @@ function calculate_total_time() {
 			entry_diff=$((entry_stop - entry_start))
 
 			#show counter for each entry
-			echo -e " $((entry_diff / 60 / 60))h $(( (entry_diff / 60) % 60))m\t| $line"
+			printf " $((entry_diff / 60 / 60))h $(( (entry_diff / 60) % 60))m\t| $line"
 
 			#update day counter
 			day_diff=$((day_diff + entry_diff ))
@@ -284,17 +284,17 @@ function calculate_total_time() {
 	done < "$1"
 
 	#print last day parsed
-	[[ $day_diff -gt 0 ]] && echo -e "\n ${C_YELLOW}Day Total: $((day_diff/60/60))h $((day_diff/60%60))m ${C_RESET}"
+	[[ $day_diff -gt 0 ]] && printf "\n ${C_YELLOW}Day Total: $((day_diff/60/60))h $((day_diff/60%60))m ${C_RESET}"
 
 	#print last week parsed
 	if [[ $((week_diff/60/60)) -lt 40 ]]; then
-        echo -e "\n ${C_RED}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}"
+        printf "\n ${C_RED}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}"
     else
-        echo -e "\n ${C_GREEN}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}"
+        printf "\n ${C_GREEN}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}"
     fi
 
 	#print whole report time
-	[[ $total_diff -gt 0 ]] && echo -e "\n${C_BLUE}Report Total Time: $((total_diff/60/60))H $((total_diff/60%60))m${C_RESET}\n"
+	[[ $total_diff -gt 0 ]] && printf "\n${C_BLUE}Report Total Time: $((total_diff/60/60))H $((total_diff/60%60))m${C_RESET}\n"
 }
 
 function register_holiweek() {
@@ -311,9 +311,9 @@ function register_holiweek() {
 function register_holiday() {
    assert_valid_date $1
 
-	echo -e "\n$($parse_date "%A (%d/%m/%Y)" $1)" >> $REPORT_FILE
+	printf "\n$($parse_date "%A (%d/%m/%Y)" $1)" >> $REPORT_FILE
 	printf "$HOLIDAY_ENTRY_START\\t$HOLIDAY_ENTRY_STOP\\t$COST_CENTER_H\\t$CUSTOMER_NAME_H\\t$PROJECT_NAME_H\\t$TASK_H\\n" >> $REPORT_FILE
-	echo -e "\nHoliday Task \"$TASK_H\" added for day $1\n\n$(tail -2 $REPORT_FILE)"
+	printf "\nHoliday Task \"$TASK_H\" added for day $1\n\n$(tail -2 $REPORT_FILE)"
 }
 
 function remove_entries(){
@@ -368,7 +368,7 @@ function register_time_entry() {
 		    printf "$COST_CENTER\t$CUSTOMER_NAME\t$PROJECT_NAME\t$TASK\n" >> $REPORT_FILE
 
 		    #add header for new day
-		    echo -e "\n$($parse_date $"%A (%d/%m/%Y)")" >> $REPORT_FILE
+		    printf "\n$($parse_date $"%A (%d/%m/%Y)")" >> $REPORT_FILE
 
 		    #start new task
 		    printf "00:01\t" >> $REPORT_FILE
@@ -381,13 +381,13 @@ function register_time_entry() {
         #end task and append biz tags
 		printf "$time_entry\t" >> $REPORT_FILE
 		printf "$COST_CENTER\t$CUSTOMER_NAME\t$PROJECT_NAME\t$TASK\t\n" >> $REPORT_FILE
-		echo -e "Task $TASK finished\n\n$(tail ${lines:-"-1"} $REPORT_FILE)"
+		printf "Task $TASK finished\n\n$(tail ${lines:-"-1"} $REPORT_FILE)"
 	else
 		#Grep the current day in the report file
 		[[ -e $REPORT_FILE ]] && grep -Fq $($parse_date "%d/%m/%Y") $REPORT_FILE
 		is_new_day=$?
 		if [ "$is_new_day" -ne 0 ]; then
-			echo -e "\n$($parse_date $"%A (%d/%m/%Y)")" >> $REPORT_FILE
+			printf "\n$($parse_date $"%A (%d/%m/%Y)")" >> $REPORT_FILE
 		fi
 		printf "$time_entry\t" >> $REPORT_FILE
 		touch $START
@@ -424,14 +424,14 @@ function showMissingReports {
 	RESULT=$(httpPostFile $TT_WS_SR $request text/xml)
 
     if [[ $IS_MAC = true ]]; then
-        RESULT=$(echo $RESULT | sed -e $'s,<,\\\n<,g' | sed -e $'s,>,: g' | egrep "<count|<due_reports"| tr -d '<' | tail -r)
+        RESULT=$(echo $RESULT | sed -e $'s,<,\\\n<,g' | sed -e $'s,>,: ,g' | egrep "<count|<due_reports"| tr -d '<' | tail -r)
     else
         RESULT=$(echo $RESULT | sed -e "s,<,\n<,g" | sed -e "s,>,: ,g" | egrep "<count|<due_reports"| tr -d '<' | tac)
     fi
 
 	rm -f "$request"
 
-	echo -e "Requesting missing reports...\n"
+	printf "Requesting missing reports...\n"
 
 	if [[ $(echo "$RESULT" | wc -l) -gt 1 ]];then
 	    echo "${C_YELLOW}$RESULT${C_RESET}"
@@ -449,18 +449,18 @@ function submitReport {
     soap_report="/tmp/soap_report_$TIMESTAMP.xml"
     option="N"
 
-    echo -e "Freely edit your report and save & quit when done.\nYou'll be asked to confirm the submission."
+    printf "Freely edit your report and save & quit when done.\nYou'll be asked to confirm the submission."
     read -n 1
 
     while [[ "$option" == "${option#[Yy]}" ]]; do
         cp $REPORT_FILE $temp_report
-        vim $temp_report
+        $EDITOR $temp_report
         calculate_total_time $temp_report
-        echo -e "\nThis is what you're sending. "
+        printf "\nThis is what you're sending. "
 	    read -n 1 -p "Are you sure? [y/N] " option
     done
 
-    echo -e "\n\nSending ..."
+    printf "\n\nSending ..."
 
 	echo "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"$WS_REPORTS/\">
 	   <soapenv:Header/>
@@ -487,15 +487,15 @@ function submitReport {
 		echo "Please configure your password in the configuration file."
 		exit 1
 	elif [[ "$RESULT" =~ ^"$RQ_SUCCESS" ]]; then
-        echo -e "\nSubmission result: ${C_GREEN} $RESULT ${C_RESET}\n"
+        printf "\nSubmission result: ${C_GREEN} $RESULT ${C_RESET}\n"
     else
-        echo -e "\nSubmission result: ${C_RED} $RESULT ${C_RESET}\n"
+        printf "\nSubmission result: ${C_RED} $RESULT ${C_RESET}\n"
     fi
 
     if [[ $SAVE_SENT_REPORTS == true ]]; then
         checkOrCreateDir $SENT_REPORTS_DIR
         cp $temp_report "$SENT_REPORTS_DIR/report_$(date +"%Y_%m_%d").txt" > /dev/null
-        echo -e "\nReport saved to: $SENT_REPORTS_DIR"
+        printf "\nReport saved to: $SENT_REPORTS_DIR"
     fi
 
 	rm -f ${soap_report} > /dev/null
@@ -523,7 +523,7 @@ function showCC {
 
 	rm -f $temp_cc
 
-    echo -e "Cost Centers\n"
+    printf "Cost Centers\n"
 	echo "$RESULT"
 }
 
@@ -635,7 +635,7 @@ while getopts "$MAIN_OPTS" opt; do
             ;;
         s)
             cat $REPORT_FILE
-            echo -e "\n"
+            printf "\n"
             $DEBUG && echo "Report file path: $REPORT_FILE"
             ;;
         h)
