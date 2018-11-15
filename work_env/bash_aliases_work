@@ -44,6 +44,7 @@ alias wmc_lintCiRelease='./gradlew lintRcsplusWebCompanionOnSoundcodeOnCiRelease
 alias wmc_cleanproject='find . -name "build*" -type d -exec rm -rf {} \;'
 alias wmc_optimizepng='find . -name "*.png" -exec zopflipng -y {} {} \;'
 alias wmc_logs='bash $WMC_SCRIPTS/ls-rcs-logs.sh'
+alias wmc_lsappconfig='find configurations/configs/ -path *app_config*xml'
 
 ########################################################
 #|# Git                                                #
@@ -53,7 +54,7 @@ alias gcd50='gcd 5.0/devel'    # git cd 5.0/devel
 alias gcd51='gcd 5.1/devel'    # git cd 5.1/devel
 alias gmkdir50='gcd50 && git checkout -b 5.0/'
 alias gmkdir51='gcd51 && git checkout -b 5.1/'
-alias gmissingmr50='git log origin/4.4/devel ^origin/5.0/devel --no-merges'
+alias gmissingmr50='git log origin/4.2/devel ^origin/5.0/devel --no-merges'
 alias gmissingmr51='git log origin/5.0/devel ^origin/5.1/devel --no-merges'
 alias gmerge50b='git merge origin/5.0/'
 alias gmerge50d='git merge origin/5.0/devel'

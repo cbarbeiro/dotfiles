@@ -155,6 +155,7 @@ alias tips-ol='cat $DOTFILES/cool_oneliners'
 alias tips-bash=' sed -n "/\# Bash/,/^\s*$/p" $DOTFILES/tips'
 alias tips-alias=' sed -n "/\# Alias/,/^\s*$/p" $DOTFILES/tips'
 alias tips-adb=' sed -n "/\# ADB/,/^\s*$/p" $DOTFILES/tips'
+alias tips-ssl=' sed -n "/\# SSL/,/^\s*$/p" $DOTFILES/tips'
 
 ########################################################
 #|# Dotfiles related                                   #

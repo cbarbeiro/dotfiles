@@ -327,7 +327,7 @@ function remove_entries(){
         exit 1
     fi
 
-    echo "$(cat "$REPORT_FILE" | head -n-$1)" > $REPORT_FILE
+    echo "$(cat "$REPORT_FILE" | sed $((max_lines-1))q)" > $REPORT_FILE
     echo "$1 line(s) removed"
 }
 
