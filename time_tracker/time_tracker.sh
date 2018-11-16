@@ -19,7 +19,8 @@ EPOCH="19700101"
 NOW="now"
 TIMESTAMP=$(date +%s)
 INTERACTIVE_TAGS="INTERACTIVE_TAGS"
-HEADER_REGEX="^\w*\s[\/\(\)[:digit:]]+$"
+HEADER_REGEX="^[a-zA-Z]+ [\/\(\)[:digit:]]+$"
+#HEADER_REGEX="^[a-zA-Z]+ "
 NEW_WEEK_REGEX="^Monday.*$"
 ENTRY_REGEX="^[[:digit:]\:\t]+[\w[:blank:]]+"
 IS_NUMBER_REGEX="^[0-9]*$"
@@ -52,12 +53,9 @@ START=$REPORT_DIR/.start
 
 function show_usage(){
     printf "Application to report time entries of working tasks.\nTask details are written when the task is finished.
-
 Usage: $(basename $0) [-h] [-a [-f time] [-t \"tag name\"] [-i]]
                         [-s] [-e] [-w] [-v day] [-V monday] [-p] [-m] [-b] [-r]
-
 Local options:
-
 -a	add a time entry now (a report entry is made of two time entries)
     -f	with -a, force a time entry. Format = %%H:%%M
     -t	with -a, add a task name instead of the default one
@@ -69,9 +67,7 @@ Local options:
 -v	add a vacation entry for the given day. Format = %%Y-%%m-%%d
 -V	add a vacation entry for a week. any given Monday. Format = %%Y-%%m-%%d
 -w	calculate total working time in the report
-
 Server options:
-
 -b	get business tags from server
 -m	get missing reports from server
 -p	post report to server
@@ -217,11 +213,17 @@ function assert_valid_date(){
 function assert_valid_monday(){
     #Get weekday
     weekday=$($parse_date "%u" "$1")
-
+    
+    if [[ $IS_MAC = true ]]; then
+	cal_cmd="cal -H $1"
+    else
+	cal_cmd="cal -m $1"
+    fi
+	
     if [[ $weekday != "1" ]]; then
-		printf "\n$1 corresponds to [ $($parse_date "" $1) ]\n\nIn order to add a full holiweek insert the corresponding Monday.\nHere's the calendar to help you choose.\n\n$(cal -m $1)\n"
-		exit $ERR_OTHER
-	fi
+	printf "\n$1 corresponds to [ $($parse_date "" $1) ]\n\nIn order to add a full holiweek insert the corresponding Monday.\nHere's the calendar to help you choose.\n\n$($cal_cmd)\n"
+	exit $ERR_OTHER
+    fi
 }
 
 # Input: "01:10"
@@ -660,6 +662,7 @@ while getopts "$MAIN_OPTS" opt; do
         s)
             validate_empty_report
             cat $REPORT_FILE
+	    printf "\n"
             $DEBUG && echo "Report file path: $REPORT_FILE"
             ;;
         h)
