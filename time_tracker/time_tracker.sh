@@ -34,7 +34,10 @@ C_GREEN=$(tput setaf 2)
 C_YELLOW=$(tput setaf 3)
 C_BLUE=$(tput setaf 4)
 
-# ERRORS
+# RETURN STATUSES
+SUCCESS=0
+ERR_OTHER=1
+ERR_AUTH=2
 
 # From this script will come custom configurations used to complete the report
 source $CONFIG
@@ -76,6 +79,19 @@ Server options:
 
 #-l	with -a, logoff computer after reporting
 #-x	with -a, turn off the screen after reporting
+}
+
+function validate_empty_report(){
+    if [[ ! -e $REPORT_FILE ]];then
+        printf "Report file doesn't exist yet. Use -a to add a task...\n"
+        exit $SUCCESS
+    fi
+
+    grep -q '[^[:space:]]' $REPORT_FILE
+    if [[ $? -eq 1 ]]; then
+        printf "Report is empty. Use -a to add a task...\n"
+        exit $SUCCESS
+    fi
 }
 
 function checkOrCreateDir() {
@@ -168,7 +184,7 @@ function parse_date_gnu(){
 function assert_not_empty(){
 	if [[ -z "$1" ]]; then
 		echo "$2"
-		exit
+		exit $ERR_OTHER
 	fi
 }
 
@@ -180,7 +196,7 @@ function assert_valid_hour(){
 
     if [[ "$hour_parsed" != "$1" ]]; then
         echo "$1 is NOT a valid HH:MM hour"
-        exit
+        exit $ERR_OTHER
     fi
 }
 
@@ -194,7 +210,7 @@ function assert_valid_date(){
 
     if [[ "$day_parsed" != "$day" ]]; then
         echo "$1 is NOT a valid YYYY-MM-DD date"
-        exit
+        exit $ERR_OTHER
     fi
 }
 
@@ -203,8 +219,8 @@ function assert_valid_monday(){
     weekday=$($parse_date "%u" "$1")
 
     if [[ $weekday != "1" ]]; then
-		printf "$1 is NOT a Monday => $($parse_date "" $1)\nIn order to add a full holiweek insert the corresponding Monday.\n"
-		exit
+		printf "\n$1 corresponds to [ $($parse_date "" $1) ]\n\nIn order to add a full holiweek insert the corresponding Monday.\nHere's the calendar to help you choose.\n\n$(cal -m $1)\n"
+		exit $ERR_OTHER
 	fi
 }
 
@@ -223,7 +239,7 @@ function calculate_total_time() {
 
 	while IFS='' read -r line || [[ -n "$line" ]]; do
 
-		$DEBUG && printf "Line read from file: $line"
+		$DEBUG && printf "Line read from file: $line\n"
 
 		if [[ -z $line ]]; then
 			$DEBUG && echo "empty line"
@@ -235,7 +251,7 @@ function calculate_total_time() {
 
 			if [[ $day_diff -gt 0 ]]; then
 				#print total time of last day parsed
-				printf "\n ${C_YELLOW}Day Total: $((day_diff/60/60))h $((day_diff/60%60))m ${C_RESET}"
+				printf "\n ${C_YELLOW}Day Total: $((day_diff/60/60))h $((day_diff/60%60))m ${C_RESET}\n"
 
 				#reset timer
 				day_diff=0
@@ -246,16 +262,16 @@ function calculate_total_time() {
 
 				#print total time of last week parsed
 				if [[ $((week_diff/60/60)) -lt 40 ]]; then
-				    printf "\n ${C_RED}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}"
+				    printf "\n ${C_RED}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}\n"
 				else
-				    printf "\n ${C_GREEN}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}"
+				    printf "\n ${C_GREEN}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}\n"
                 fi
 
 				#reset timer
 				week_diff=0
 			fi
 
-			printf "\n\t   $line"
+			printf "\n\t   $line\n"
 
 		elif [[ "$line" =~ $ENTRY_REGEX ]]; then
 			$DEBUG && echo "IS_ENTRY"
@@ -269,7 +285,7 @@ function calculate_total_time() {
 			entry_diff=$((entry_stop - entry_start))
 
 			#show counter for each entry
-			printf " $((entry_diff / 60 / 60))h $(( (entry_diff / 60) % 60))m\t| $line"
+			printf " $((entry_diff / 60 / 60))h $(( (entry_diff / 60) % 60))m\t| $line\n"
 
 			#update day counter
 			day_diff=$((day_diff + entry_diff ))
@@ -284,17 +300,17 @@ function calculate_total_time() {
 	done < "$1"
 
 	#print last day parsed
-	[[ $day_diff -gt 0 ]] && printf "\n ${C_YELLOW}Day Total: $((day_diff/60/60))h $((day_diff/60%60))m ${C_RESET}"
+	[[ $day_diff -gt 0 ]] && printf "\n ${C_YELLOW}Day Total: $((day_diff/60/60))h $((day_diff/60%60))m ${C_RESET}\n"
 
 	#print last week parsed
 	if [[ $((week_diff/60/60)) -lt 40 ]]; then
-        printf "\n ${C_RED}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}"
+        printf "\n ${C_RED}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}\n"
     else
-        printf "\n ${C_GREEN}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}"
+        printf "\n ${C_GREEN}Week Total: $((week_diff/60/60))h $((week_diff/60%60))m ${C_RESET}\n"
     fi
 
 	#print whole report time
-	[[ $total_diff -gt 0 ]] && printf "\n${C_BLUE}Report Total Time: $((total_diff/60/60))H $((total_diff/60%60))m${C_RESET}\n"
+	[[ $total_diff -gt 0 ]] && printf "\n${C_BLUE}Report Total Time: $((total_diff/60/60))H $((total_diff/60%60))m${C_RESET}\n\n"
 }
 
 function register_holiweek() {
@@ -311,9 +327,9 @@ function register_holiweek() {
 function register_holiday() {
    assert_valid_date $1
 
-	printf "\n$($parse_date "%A (%d/%m/%Y)" $1)" >> $REPORT_FILE
+	printf "\n$($parse_date "%A (%d/%m/%Y)" $1)\n" >> $REPORT_FILE
 	printf "$HOLIDAY_ENTRY_START\\t$HOLIDAY_ENTRY_STOP\\t$COST_CENTER_H\\t$CUSTOMER_NAME_H\\t$PROJECT_NAME_H\\t$TASK_H\\n" >> $REPORT_FILE
-	printf "\nHoliday Task \"$TASK_H\" added for day $1\n\n$(tail -2 $REPORT_FILE)"
+	printf "\nHoliday Task \"$TASK_H\" added for day $1\n\n$(tail -2 $REPORT_FILE)\n"
 }
 
 function remove_entries(){
@@ -321,13 +337,13 @@ function remove_entries(){
 
     if [[ ! "$1" =~ $IS_NUMBER_REGEX ]]; then
         echo "$1 is not a number...";
-        exit 1
+        exit $ERR_OTHER
     elif [[ "$1" -lt 1 ]] || [[ "$1" -gt $max_lines ]]; then
         echo "Trying to remove an impossible number of lines. (Min= 1, Max= $max_lines)"
-        exit 1
+        exit $ERR_OTHER
     fi
 
-    echo "$(cat "$REPORT_FILE" | sed $((max_lines-1))q)" > $REPORT_FILE
+    echo "$(cat "$REPORT_FILE" | sed $(($max_lines-$1))q)" > $REPORT_FILE
     echo "$1 line(s) removed"
 }
 
@@ -341,7 +357,10 @@ function register_time_entry() {
 
     assert_valid_hour $time_entry
 
-	if [[ -e $START ]]; then
+    is_start_task=$(tail -n 1 $REPORT_FILE 2> /dev/null | grep -Eq $"^[[:digit:]]{2}\:[[:digit:]]{2}[[:space:]]$"; echo $?)
+    $DEBUG && printf "is_start_task=[$is_start_task]\n"
+
+	if [[ $is_start_task -eq 0 ]]; then
 
         #Check for TASK only if we're writing it...
         if [[ $2 = $INTERACTIVE_TAGS ]]; then
@@ -353,8 +372,6 @@ function register_time_entry() {
         elif [[ ! -z "$2" ]]; then
             TASK="$2"
         fi
-
-		rm $START
 
         # if subtraction is negative, means a day has passed.
         entry_start=$(get_seconds "$(tail -1 $REPORT_FILE | tr -d '\t')")
@@ -368,29 +385,31 @@ function register_time_entry() {
 		    printf "$COST_CENTER\t$CUSTOMER_NAME\t$PROJECT_NAME\t$TASK\n" >> $REPORT_FILE
 
 		    #add header for new day
-		    printf "\n$($parse_date $"%A (%d/%m/%Y)")" >> $REPORT_FILE
+		    printf "\n$($parse_date $"%A (%d/%m/%Y)")\n" >> $REPORT_FILE
 
 		    #start new task
 		    printf "00:01\t" >> $REPORT_FILE
 
 		    #show four lines instead of one
 		    lines="-4"
-		    echo $lines
         fi
 
         #end task and append biz tags
 		printf "$time_entry\t" >> $REPORT_FILE
-		printf "$COST_CENTER\t$CUSTOMER_NAME\t$PROJECT_NAME\t$TASK\t\n" >> $REPORT_FILE
-		printf "Task $TASK finished\n\n$(tail ${lines:-"-1"} $REPORT_FILE)"
+		printf "$COST_CENTER\t$CUSTOMER_NAME\t$PROJECT_NAME\t$TASK\n" >> $REPORT_FILE
+		printf "Task $TASK finished\n\n$(tail ${lines:-"-1"} $REPORT_FILE)\n"
 	else
 		#Grep the current day in the report file
 		[[ -e $REPORT_FILE ]] && grep -Fq $($parse_date "%d/%m/%Y") $REPORT_FILE
 		is_new_day=$?
+
+		#Add a new day separator if needed
 		if [ "$is_new_day" -ne 0 ]; then
-			printf "\n$($parse_date $"%A (%d/%m/%Y)")" >> $REPORT_FILE
+			printf "$($parse_date $"%A (%d/%m/%Y)")\n" >> $REPORT_FILE
 		fi
+
+		#Print the time entry
 		printf "$time_entry\t" >> $REPORT_FILE
-		touch $START
 		echo "New task started at $(tail -1 $REPORT_FILE)"
 	fi
 }
@@ -449,19 +468,24 @@ function submitReport {
     soap_report="/tmp/soap_report_$TIMESTAMP.xml"
     option="N"
 
-    printf "Freely edit your report and save & quit when done.\nYou'll be asked to confirm the submission."
+    printf "Freely edit your report and save & quit when done.\nYou'll be asked to confirm the submission.\n"
     read -n 1
 
-    while [[ "$option" == "${option#[Yy]}" ]]; do
+    if [[ "$option" == "${option#[Yy]}" ]]; then
         cp $REPORT_FILE $temp_report
         $EDITOR $temp_report
         calculate_total_time $temp_report
-        printf "\nThis is what you're sending. "
+        printf "\nThis is what you're sending.\n"
 	    read -n 1 -p "Are you sure? [y/N] " option
-    done
+    fi
 
-    printf "\n\nSending ..."
+    if [[ "$option" == "${option#[Yy]}" ]]; then
+        printf "\n\nCancelling ...\n"
+        exit $ERR_OTHER
+    fi
 
+    printf "\n\nSending ...\n"
+    
 	echo "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ws=\"$WS_REPORTS/\">
 	   <soapenv:Header/>
 	   <soapenv:Body>
@@ -485,7 +509,7 @@ function submitReport {
 	
     if [[ "$RESULT" =~ ^"$RQ_ERR_AUTH" ]]; then
 		echo "Please configure your password in the configuration file."
-		exit 1
+		exit $ERR_OTHER
 	elif [[ "$RESULT" =~ ^"$RQ_SUCCESS" ]]; then
         printf "\nSubmission result: ${C_GREEN} $RESULT ${C_RESET}\n"
     else
@@ -495,7 +519,7 @@ function submitReport {
     if [[ $SAVE_SENT_REPORTS == true ]]; then
         checkOrCreateDir $SENT_REPORTS_DIR
         cp $temp_report "$SENT_REPORTS_DIR/report_$(date +"%Y_%m_%d").txt" > /dev/null
-        printf "\nReport saved to: $SENT_REPORTS_DIR"
+        printf "\nReport saved to: $SENT_REPORTS_DIR\n"
     fi
 
 	rm -f ${soap_report} > /dev/null
@@ -523,7 +547,7 @@ function showCC {
 
 	rm -f $temp_cc
 
-    printf "Cost Centers\n"
+    printf "Cost Centers\n\n"
 	echo "$RESULT"
 }
 
@@ -546,13 +570,13 @@ PASS=$(decode_base64 $PASSWORD)
 
 if [[ "x"$LOGIN == "xCHANGE_ME" ]]; then
     echo "Please update the config file with your credentials."
-    exit
+    exit $ERR_AUTH
 fi
 
 # If no arguments are given, show_usage
 if [[ -z $1 ]]; then
     show_usage
-    exit
+    exit $ERR_OTHER
 fi
 
 # OPTIONS
@@ -576,8 +600,8 @@ while getopts "$MAIN_OPTS" opt; do
                         ;;
                     i)
                         if ! command -v fzf > /dev/null; then
-                            echo "This option depends on 'fzf'. Please install it first in order to use this."
-                            exit
+                            echo "This option depends on 'fzf'. Please install it first in order to use this option."
+                            exit $ERR_OTHER
                         fi
 
                         #Tags are chosen interactively
@@ -634,8 +658,8 @@ while getopts "$MAIN_OPTS" opt; do
             $EDITOR $REPORT_FILE
             ;;
         s)
+            validate_empty_report
             cat $REPORT_FILE
-            printf "\n"
             $DEBUG && echo "Report file path: $REPORT_FILE"
             ;;
         h)
@@ -643,7 +667,7 @@ while getopts "$MAIN_OPTS" opt; do
             ;;
         :)
             echo "Option -$OPTARG requires an argument." >&2
-            exit 1
+            exit $ERR_OTHER
             ;;
     esac
 done
